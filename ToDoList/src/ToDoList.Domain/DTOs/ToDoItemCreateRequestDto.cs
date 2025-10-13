@@ -1,4 +1,5 @@
 using System;
+using ToDoList.Domain.Models;
 
 namespace ToDoList.Domain.DTOs;
 
