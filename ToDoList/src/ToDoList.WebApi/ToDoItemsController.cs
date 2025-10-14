@@ -61,5 +61,10 @@ public class ToDoItemsController : ControllerBase
     {
         return Ok();
     }
+
+    public void AddItemToStorage(ToDoItem item)
+    {
+        items.Add(item);
+    }
 }
 
