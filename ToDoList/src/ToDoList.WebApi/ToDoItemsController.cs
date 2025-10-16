@@ -120,7 +120,8 @@ public class ToDoItemsController : ControllerBase
         }
 
         //respond to client
-        return NoContent(); //204
+        //return NoContent(); //204
+        return Ok(items);
     }
 
     public void AddItemToStorage(ToDoItem item)

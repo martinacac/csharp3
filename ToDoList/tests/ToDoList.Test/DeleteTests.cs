@@ -2,6 +2,7 @@ namespace ToDoList.Test;
 
 using ToDoList.Domain.Models;
 using ToDoList.WebApi;
+using Microsoft.AspNetCore.Mvc;
 
 public class DeleteTests
 {
@@ -28,11 +29,13 @@ public class DeleteTests
         controller.AddItemToStorage(toDoItem2);
         //Act
         var result = controller.DeleteById(1);
-        var value = result.GetValue();
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        var value = Assert.IsAssignableFrom<IEnumerable<ToDoItem>>(okResult.Value);
+
         //Assert
         Assert.NotNull(value);
 
         var firstToDo = value.First();
-        Assert.Equal(2, firstToDo.Id);
+        Assert.Equal(2, firstToDo.ToDoItemId);
     }
 }

@@ -2,8 +2,12 @@ namespace ToDoList.Test;
 
 using System.ComponentModel;
 using NuGet.Frameworks;
+using System.Linq;
+using Microsoft.AspNetCore.Mvc;
 using ToDoList.Domain.Models;
+using ToDoList.Domain.DTOs;
 using ToDoList.WebApi;
+using Xunit;
 public class UpdateTests
 {
     [Fact]
@@ -28,13 +32,20 @@ public class UpdateTests
         controller.AddItemToStorage(toDoItem1);
         controller.AddItemToStorage(toDoItem2);
 
-        string newDescription = "nový popis";
+        var updateDto = new ToDoItemUpdateRequestDto(
+            toDoItem1.Name,
+            "nový popis",
+            toDoItem1.IsCompleted
+        );
 
-        //Act
-        controller.UpdateById(1, toDoItem1.Description = newDescription);
-        var result = controller.Read();
+        // Act
+        var updateResult = controller.UpdateById(1, updateDto);
+        var readResult = controller.Read();
+        var okResult = Assert.IsType<OkObjectResult>(readResult);
+        var items = Assert.IsAssignableFrom<IEnumerable<ToDoItemGetResponseDto>>(okResult.Value);
 
-        //Assert
-        Assert.Equal(newDescription, toDoItem1.Description);
+        // Assert
+        var updatedItem = items.First(i => i.Id == 1);
+        Assert.Equal("nový popis", updatedItem.Description);
     }
 }
