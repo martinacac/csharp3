@@ -1,13 +1,12 @@
 namespace ToDoList.Test;
 
-using NuGet.Frameworks;
 using ToDoList.Domain.Models;
 using ToDoList.WebApi;
 
-public class GetTests
+public class DeleteTests
 {
     [Fact]
-    public void Get_AllItems_ReturnsAllItems()
+    public void DeleteById_SecondItemBecomesFirst()
     {
         //Arrange
         var toDoItem1 = new ToDoItem()
@@ -28,15 +27,12 @@ public class GetTests
         controller.AddItemToStorage(toDoItem1);
         controller.AddItemToStorage(toDoItem2);
         //Act
-        var result = controller.Read();
-        var value = result.GetValue(); //řádek kvůli debugování
+        var result = controller.DeleteById(1);
+        var value = result.GetValue();
         //Assert
         Assert.NotNull(value);
 
         var firstToDo = value.First();
-        Assert.Equal(1, firstToDo.Id); //manuálně
-        Assert.Equal(toDoItem1.ToDoItemId, firstToDo.Id); //nebo možno i takto
-        Assert.Equal(toDoItem1.Description, firstToDo.Description);
-        Assert.Equal(toDoItem1.IsCompleted, firstToDo.IsCompleted);
+        Assert.Equal(2, firstToDo.Id);
     }
 }

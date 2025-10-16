@@ -12,6 +12,18 @@ public class CalculatorTest
         //assert
         Assert.Equal(5, result);
     }
+    [Fact]
+    public void Calculator_Divide_ShouldReturnCorrectResult()
+    {
+        // Arrange
+        var calculator = new Calculator();
+
+        // Act
+        var result = calculator.Divide(6, 2);
+
+        // Assert
+        Assert.Equal(3, result);
+    }
 
     [Fact]
     public void Calculator_Divide_ThrowsDivisionByZeroException()
@@ -19,7 +31,7 @@ public class CalculatorTest
         //arrange
         var calculator = new Calculator();
         //act + assert
-        //Assert.Throws<> //chybí dopsat
+        Assert.Throws<DivideByZeroException>(() => calculator.Divide(6, 0));
 
     }
 }

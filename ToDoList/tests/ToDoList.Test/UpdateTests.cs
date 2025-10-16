@@ -1,13 +1,13 @@
 namespace ToDoList.Test;
 
+using System.ComponentModel;
 using NuGet.Frameworks;
 using ToDoList.Domain.Models;
 using ToDoList.WebApi;
-
-public class GetTests
+public class UpdateTests
 {
     [Fact]
-    public void Get_AllItems_ReturnsAllItems()
+    public void Update_ReturnsCorrectItemDescriptionAfterUpdate()
     {
         //Arrange
         var toDoItem1 = new ToDoItem()
@@ -27,16 +27,14 @@ public class GetTests
         var controller = new ToDoItemsController();
         controller.AddItemToStorage(toDoItem1);
         controller.AddItemToStorage(toDoItem2);
-        //Act
-        var result = controller.Read();
-        var value = result.GetValue(); //řádek kvůli debugování
-        //Assert
-        Assert.NotNull(value);
 
-        var firstToDo = value.First();
-        Assert.Equal(1, firstToDo.Id); //manuálně
-        Assert.Equal(toDoItem1.ToDoItemId, firstToDo.Id); //nebo možno i takto
-        Assert.Equal(toDoItem1.Description, firstToDo.Description);
-        Assert.Equal(toDoItem1.IsCompleted, firstToDo.IsCompleted);
+        string newDescription = "nový popis";
+
+        //Act
+        controller.UpdateById(1, toDoItem1.Description = newDescription);
+        var result = controller.Read();
+
+        //Assert
+        Assert.Equal(newDescription, toDoItem1.Description);
     }
 }

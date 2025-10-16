@@ -1,5 +1,3 @@
-using System;
-
 namespace ToDoList.Domain.Models;
 
 public class ToDoItem
