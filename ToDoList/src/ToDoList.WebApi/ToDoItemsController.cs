@@ -14,7 +14,15 @@ public class ToDoItemsController : ControllerBase
     public ActionResult<ToDoItemGetResponseDto> Create(ToDoItemCreateRequestDto request) //použijeme DTO - Data Transfer Object, request ptž to přichází od klienta
     {
         //return Ok();
+        if (request == null)
+        {
+            return Problem("Request cannot be null.", null, StatusCodes.Status500InternalServerError);
+        }
 
+        if (string.IsNullOrWhiteSpace(request.Name) || string.IsNullOrWhiteSpace(request.Description) || string.IsNullOrEmpty(request.Name) || string.IsNullOrEmpty(request.Description))
+        {
+            return BadRequest("Name and Description are required.");
+        }
         //map to Domain object as soon as possible
         var item = request.ToDomain();
 

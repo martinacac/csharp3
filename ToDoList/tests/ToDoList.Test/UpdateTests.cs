@@ -41,7 +41,7 @@ public class UpdateTests
         // Act
         var updateResult = controller.UpdateById(1, updateDto);
         var readResult = controller.Read();
-        var okResult = Assert.IsType<OkObjectResult>(readResult);
+        var okResult = Assert.IsType<OkObjectResult>(readResult.Result);
         var items = Assert.IsAssignableFrom<IEnumerable<ToDoItemGetResponseDto>>(okResult.Value);
 
         // Assert
