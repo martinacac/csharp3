@@ -53,9 +53,9 @@ public class CreateTests
         // Arrange
         var controller = new ToDoItemsController();
         var requestDto = new ToDoItemCreateRequestDto(
-            name: "Valid Name",
-            description: "",
-            isCompleted: false
+            Name: "Valid Name",
+            Description: "",
+            IsCompleted: false
         );
 
         // Act
