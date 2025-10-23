@@ -1,6 +1,5 @@
-namespace ToDoList.WebApi;
+namespace ToDoList.WebApi.Controllers;
 
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ToDoList.Domain.DTOs;
 using ToDoList.Domain.Models;
@@ -9,20 +8,11 @@ using ToDoList.Domain.Models;
 [ApiController]
 public class ToDoItemsController : ControllerBase
 {
-    private static List<ToDoItem> items = [];
-    [HttpPost]
-    public ActionResult<ToDoItemGetResponseDto> Create(ToDoItemCreateRequestDto request) //použijeme DTO - Data Transfer Object, request ptž to přichází od klienta
-    {
-        //return Ok();
-        if (request == null)
-        {
-            return Problem("Request cannot be null.", null, StatusCodes.Status500InternalServerError);
-        }
+    public readonly List<ToDoItem> items = [];
 
-        if (string.IsNullOrWhiteSpace(request.Name) || string.IsNullOrWhiteSpace(request.Description) || string.IsNullOrEmpty(request.Name) || string.IsNullOrEmpty(request.Description))
-        {
-            return BadRequest("Name and Description are required.");
-        }
+    [HttpPost]
+    public ActionResult<ToDoItemGetResponseDto> Create(ToDoItemCreateRequestDto request)
+    {
         //map to Domain object as soon as possible
         var item = request.ToDomain();
 
@@ -45,7 +35,7 @@ public class ToDoItemsController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<ToDoItemGetResponseDto>> Read() //api/ToDoItems GET
+    public ActionResult<IEnumerable<ToDoItemGetResponseDto>> Read()
     {
         List<ToDoItem> itemsToGet;
         try
@@ -63,7 +53,7 @@ public class ToDoItemsController : ControllerBase
             : Ok(itemsToGet.Select(ToDoItemGetResponseDto.FromDomain)); //200
     }
 
-    [HttpGet("{toDoItemId:int}")] //[HttpGet("read2")] //api/ToDoItems/id GET
+    [HttpGet("{toDoItemId:int}")]
     public ActionResult<ToDoItemGetResponseDto> ReadById(int toDoItemId)
     {
         //try to retrieve the item by id
@@ -82,6 +72,7 @@ public class ToDoItemsController : ControllerBase
             ? NotFound() //404
             : Ok(ToDoItemGetResponseDto.FromDomain(itemToGet)); //200
     }
+
     [HttpPut("{toDoItemId:int}")]
     public IActionResult UpdateById(int toDoItemId, [FromBody] ToDoItemUpdateRequestDto request)
     {
@@ -110,7 +101,7 @@ public class ToDoItemsController : ControllerBase
     }
 
     [HttpDelete("{toDoItemId:int}")]
-    public IActionResult DeleteById(int toDoItemId) //nechci umožnit smazat všechny úkoly najednou
+    public IActionResult DeleteById(int toDoItemId)
     {
         //try to delete the item
         try
@@ -128,8 +119,7 @@ public class ToDoItemsController : ControllerBase
         }
 
         //respond to client
-        //return NoContent(); //204
-        return Ok(items);
+        return NoContent(); //204
     }
 
     public void AddItemToStorage(ToDoItem item)
@@ -137,4 +127,3 @@ public class ToDoItemsController : ControllerBase
         items.Add(item);
     }
 }
-
