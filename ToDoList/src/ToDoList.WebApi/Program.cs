@@ -1,8 +1,10 @@
+using ToDoList.Persistence;
 var builder = WebApplication.CreateBuilder(args);
 {
     //configure DI
     //sem musíme přidat controllery takto:
     builder.Services.AddControllers();
+    builder.Services.AddDbContext<ToDoItemsContext>();
 }
 var app = builder.Build();
 {
