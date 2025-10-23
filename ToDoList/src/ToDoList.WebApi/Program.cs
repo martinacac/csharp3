@@ -1,10 +1,12 @@
+using Microsoft.EntityFrameworkCore;
 using ToDoList.Persistence;
 var builder = WebApplication.CreateBuilder(args);
 {
     //configure DI
     //sem musíme přidat controllery takto:
     builder.Services.AddControllers();
-    builder.Services.AddDbContext<ToDoItemsContext>();
+    //builder.Services.AddDbContext<ToDoItemsContext>();
+    builder.Services.AddDbContext<ToDoItemsContext>(options => options.UseSqlite("Data Source=../../data/localdb.db"));
 }
 var app = builder.Build();
 {
