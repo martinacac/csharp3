@@ -12,16 +12,21 @@ public class CreateTests
     [Fact]
     public async Task Create_AddsItemToTestDatabase()
     {
+        // Arrange
         var context = TestUtils.TestDbContextFactory.CreateTestDbContext();
         var controller = new ToDoItemsController(context);
 
         var request = new ToDoItemCreateRequestDto("Test", "Popis", false);
+        // Act
         var result = await controller.Create(request);
 
         var created = Assert.IsType<CreatedAtActionResult>(result.Result);
         var dto = Assert.IsType<ToDoItemGetResponseDto>(created.Value);
-
+        // Assert
         Assert.Equal("Test", dto.Name);
+        // Cleanup
+        context.ToDoItems.RemoveRange(context.ToDoItems);
+        await context.SaveChangesAsync();
     }
 
     [Fact]
@@ -43,6 +48,10 @@ public class CreateTests
         // Assert
         var badRequest = Assert.IsType<BadRequestObjectResult>(result.Result);
         Assert.Equal("Name and Description are required.", badRequest.Value);
+
+        // Cleanup
+        context.ToDoItems.RemoveRange(context.ToDoItems);
+        await context.SaveChangesAsync();
     }
 
     // [Fact]

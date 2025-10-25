@@ -6,6 +6,37 @@ using Microsoft.AspNetCore.Mvc;
 
 public class DeleteTests
 {
+    [Fact]
+    public async Task Delete_RemovesItemFromDatabase()
+    {
+        // Arrange
+        var context = TestUtils.TestDbContextFactory.CreateTestDbContext();
+
+        var item = new ToDoItem
+        {
+            Name = "Task to delete",
+            Description = "This will be removed",
+            IsCompleted = false
+        };
+
+        context.ToDoItems.Add(item);
+        await context.SaveChangesAsync();
+
+        var controller = new ToDoItemsController(context);
+
+        // Act
+        var result = await controller.DeleteById(item.ToDoItemId);
+
+        // Assert
+        Assert.IsType<NoContentResult>(result);
+
+        var deletedItem = await context.ToDoItems.FindAsync(item.ToDoItemId);
+        Assert.Null(deletedItem);
+
+        // Cleanup
+        context.ToDoItems.RemoveRange(context.ToDoItems);
+        await context.SaveChangesAsync();
+    }
     // [Fact]
     // public void DeleteById_SecondItemBecomesFirst()
     // {

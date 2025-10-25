@@ -10,6 +10,41 @@ using ToDoList.WebApi;
 using Xunit;
 public class UpdateTests
 {
+    [Fact]
+    public async Task Update_ChangesItemDescriptionCorrectly()
+    {
+        // Arrange
+        var context = TestUtils.TestDbContextFactory.CreateTestDbContext();
+
+        var originalItem = new ToDoItem
+        {
+            Name = "Original Task",
+            Description = "Initial description",
+            IsCompleted = false
+        };
+
+        context.ToDoItems.Add(originalItem);
+        await context.SaveChangesAsync();
+
+        var controller = new ToDoItemsController(context);
+
+        var updateDto = new ToDoItemUpdateRequestDto(
+            Name: originalItem.Name,
+            Description: "Updated description",
+            IsCompleted: originalItem.IsCompleted
+        );
+
+        // Act
+        var result = await controller.UpdateById(originalItem.ToDoItemId, updateDto);
+
+        // Assert
+        Assert.IsType<NoContentResult>(result);
+
+        var updatedItem = await context.ToDoItems.FindAsync(originalItem.ToDoItemId);
+        Assert.NotNull(updatedItem);
+        Assert.Equal("Updated description", updatedItem.Description);
+    }
+
     // [Fact]
     // public void Update_ReturnsCorrectItemDescriptionAfterUpdate()
     // {
