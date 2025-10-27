@@ -17,6 +17,7 @@ public class ToDoItemsController : ControllerBase
     public ToDoItemsController(ToDoItemsContext context)
     {
         this.context = context;
+        //vytvoření úkolu pro odzkoušení a jeho uložení do tabulky ToDoItems (viz DbSet v ToDoItemsContext):
         //ToDoItem item = new ToDoItem { Name = "Prvni ukol", Description = "prvni popisek", IsCompleted = false };
         //context.ToDoItems.Add(item);
         //context.SaveChanges();
@@ -44,6 +45,7 @@ public class ToDoItemsController : ControllerBase
         {
             //item.ToDoItemId = items.Count == 0 ? 1 : items.Max(o => o.ToDoItemId) + 1;
             //items.Add(item);
+
             //context.ToDoItems.Add(item);
             //context.SaveChanges();
             await context.ToDoItems.AddAsync(item);

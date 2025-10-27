@@ -6,10 +6,17 @@ var builder = WebApplication.CreateBuilder(args);
     //sem musíme přidat controllery takto:
     builder.Services.AddControllers();
     //builder.Services.AddDbContext<ToDoItemsContext>();
+    //EF Core context
     builder.Services.AddDbContext<ToDoItemsContext>(options => options.UseSqlite("Data Source=../../data/localdb.db"));
 }
 var app = builder.Build();
 {
+    // Apply pending migrations at startup
+    using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<ToDoItemsContext>();
+        db.Database.Migrate(); // applies migrations automatically
+    }
     //configure Middleware (HTTP request pipeline)
     app.MapControllers(); //namapuji controllery
 }
