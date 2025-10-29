@@ -9,8 +9,16 @@ public static class TestDbContextFactory
 {
     public static ToDoItemsContext CreateTestDbContext()
     {
+        // Build a safe, relative path to the test database
+        var baseDir = Directory.GetCurrentDirectory();
+        var dbDir = Path.Combine(baseDir, "IntegrationTests", "data");
+        Directory.CreateDirectory(dbDir); // ensure folder exists
+
+        var dbPath = Path.Combine(dbDir, "localdb_test.db");
+        var connectionString = $"Data Source={dbPath}";
+
         var options = new DbContextOptionsBuilder<ToDoItemsContext>()
-            .UseSqlite("Data Source=C:/Users/w/csharp3/csharp3/ToDoList/tests/ToDoList.Test/IntegrationTests/data/localdb_test.db")
+            .UseSqlite(connectionString)
             .Options;
 
         var context = new ToDoItemsContext(options);
@@ -19,6 +27,5 @@ public static class TestDbContextFactory
 
         context.Database.EnsureCreated();
         return context;
-
     }
 }
