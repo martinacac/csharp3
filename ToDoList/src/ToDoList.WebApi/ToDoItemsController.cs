@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using ToDoList.Domain.DTOs;
 using ToDoList.Domain.Models;
 using ToDoList.Persistence;
+using ToDoList.Persistence.Repositories;
 
 [Route("api/[controller]")] //localhost:5000/api/ToDoItems
 [ApiController]
@@ -13,10 +14,12 @@ public class ToDoItemsController : ControllerBase
 {
     public readonly List<ToDoItem> items = []; //po dopsání úkolu již není potřeba a můžeme smazat
     private readonly ToDoItemsContext context;
+    private readonly IRepository<ToDoItem> repository;
 
-    public ToDoItemsController(ToDoItemsContext context)
+    public ToDoItemsController(ToDoItemsContext context, IRepository<ToDoItem> repository)
     {
         this.context = context;
+        this.repository = repository;
         //vytvoření úkolu pro odzkoušení a jeho uložení do tabulky ToDoItems (viz DbSet v ToDoItemsContext):
         //ToDoItem item = new ToDoItem { Name = "Prvni ukol", Description = "prvni popisek", IsCompleted = false };
         //context.ToDoItems.Add(item);
@@ -48,8 +51,10 @@ public class ToDoItemsController : ControllerBase
 
             //context.ToDoItems.Add(item);
             //context.SaveChanges();
-            await context.ToDoItems.AddAsync(item);
-            await context.SaveChangesAsync();
+            //await context.ToDoItems.AddAsync(item);
+            //await context.SaveChangesAsync();
+            //repository.Create(item);
+            repository.Create(item);
         }
         catch (Exception ex)
         {
