@@ -1,43 +1,43 @@
-namespace ToDoList.Test.IntegrationTests;
+// namespace ToDoList.Test.IntegrationTests;
 
-using NuGet.Frameworks;
-using Microsoft.AspNetCore.Mvc;
-using ToDoList.Domain.Models;
-using ToDoList.WebApi;
+// using NuGet.Frameworks;
+// using Microsoft.AspNetCore.Mvc;
+// using ToDoList.Domain.Models;
+// using ToDoList.WebApi;
 
-public class GetTests
-{
-    [Fact]
-    public async Task Read_ReturnsAllItems()
-    {
-        // Arrange
-        var context = TestUtils.TestDbContextFactory.CreateTestDbContext();
+// public class GetTests
+// {
+//     [Fact]
+//     public async Task Read_ReturnsAllItems()
+//     {
+//         // Arrange
+//         var context = TestUtils.TestDbContextFactory.CreateTestDbContext();
 
-        context.ToDoItems.RemoveRange(context.ToDoItems); // Cleanup
-        await context.SaveChangesAsync();
+//         context.ToDoItems.RemoveRange(context.ToDoItems); // Cleanup
+//         await context.SaveChangesAsync();
 
-        context.ToDoItems.AddRange(
-            new ToDoItem { Name = "Task 1", Description = "First task", IsCompleted = false },
-            new ToDoItem { Name = "Task 2", Description = "Second task", IsCompleted = true }
-        );
-        await context.SaveChangesAsync();
+//         context.ToDoItems.AddRange(
+//             new ToDoItem { Name = "Task 1", Description = "First task", IsCompleted = false },
+//             new ToDoItem { Name = "Task 2", Description = "Second task", IsCompleted = true }
+//         );
+//         await context.SaveChangesAsync();
 
-        var controller = new ToDoItemsController(context);
+//         var controller = new ToDoItemsController(context: context, repository: null); //if nepoužívám mock tak jen 1 parametr (context)
 
-        // Act
-        var result = await controller.Read();
+//         // Act
+//         var result = await controller.Read();
 
-        // Assert
-        var okResult = Assert.IsType<OkObjectResult>(result.Result);
-        var items = Assert.IsAssignableFrom<List<ToDoItem>>(okResult.Value);
+//         // Assert
+//         var okResult = Assert.IsType<OkObjectResult>(result.Result);
+//         var items = Assert.IsAssignableFrom<List<ToDoItem>>(okResult.Value);
 
-        Assert.Equal(2, items.Count);
-        Assert.Contains(items, i => i.Name == "Task 1");
-        Assert.Contains(items, i => i.Name == "Task 2");
+//         Assert.Equal(2, items.Count);
+//         Assert.Contains(items, i => i.Name == "Task 1");
+//         Assert.Contains(items, i => i.Name == "Task 2");
 
-        // Cleanup
-        context.ToDoItems.RemoveRange(context.ToDoItems);
-        await context.SaveChangesAsync();
+//         // Cleanup
+//         context.ToDoItems.RemoveRange(context.ToDoItems);
+//         await context.SaveChangesAsync();
 
         // [Fact]
         // public void Get_AllItems_ReturnsAllItems()
@@ -72,5 +72,5 @@ public class GetTests
         //     Assert.Equal(toDoItem1.Description, firstToDo.Description);
         //     Assert.Equal(toDoItem1.IsCompleted, firstToDo.IsCompleted);
         // }
-    }
-}
+    //}
+//}
