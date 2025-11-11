@@ -10,7 +10,7 @@ using ToDoList.Domain.Models;
 //using ToDoList.Test.IntegrationTests; //kvůli ActionResultExtensions.cs ale ten jsem si přesunula do složky výše
 using ToDoList.Test; //kvůli ActionResultExtensions.cs
 
-public class PostTests
+public class PostTests //Create
 {
     [Fact]
     public void Post_ValidRequest_ReturnsNewItem()

@@ -10,7 +10,7 @@ using ToDoList.Domain.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 
-public class GetTests
+public class GetTests //Read
 {
     [Fact]
     public void Get_ReadWhenSomeItemAvailable_ReturnsOk()

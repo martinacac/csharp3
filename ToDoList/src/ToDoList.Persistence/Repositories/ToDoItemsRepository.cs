@@ -2,9 +2,9 @@ namespace ToDoList.Persistence.Repositories;
 
 using ToDoList.Domain.Models;
 
-public class ToDoItemsRepository : IRepository<ToDoItem>
+public class ToDoItemsRepository : IRepository<ToDoItem> //implementace IRepository
 {
-    private readonly ToDoItemsContext context;
+    private readonly ToDoItemsContext context; //context přesunut z controlleru sem do repository
 
     public ToDoItemsRepository(ToDoItemsContext context)
     {
