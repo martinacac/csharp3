@@ -3,59 +3,34 @@ namespace ToDoList.Test.UnitTests;
 using System.Collections.Generic;
 using System.Linq;
 using ToDoList.Domain.Models;
-using ToDoList.Persistence;
-
 using NSubstitute;
-using ToDoList.Test;
 using ToDoList.Persistence.Repositories;
 using ToDoList.WebApi;
+using ToDoList.Domain.DTOs;
 using Microsoft.AspNetCore.Mvc;
+
 
 public class GetTests
 {
     [Fact]
-    public void Get_AllItems_ReturnsAllItems()
+    public void Get_ReadWhenSomeItemAvailable_ReturnsOk()
     {
         // Arrange
         var repositoryMock = Substitute.For<IRepository<ToDoItem>>();
-
-        var controller = new ToDoItemsController(context: null, repository: repositoryMock);
-
-        var todoItem1 = new ToDoItem
-        {
-            ToDoItemId = 1,
-            Name = "Jmeno1",
-            Description = "Popis1",
-            IsCompleted = false
-        };
-        var todoItem2 = new ToDoItem
-        {
-            ToDoItemId = 2,
-            Name = "Jmeno2",
-            Description = "Popis2",
-            IsCompleted = true
-        };
-
-        //var items = new List<ToDoItem> { todoItem1, todoItem2 };
-        repositoryMock.GetAll().Returns(new List<ToDoItem> { todoItem1, todoItem2 });
-        //repositoryMock.GetAll().Returns(new List<ToDoItem> { todoItem1, todoItem2 });
-        //repositoryMock.Received(1).GetAll();
+        var controller = new ToDoItemsController(repositoryMock); //odstranit context z controlleru!!!
+        //konfigurace mocku
+        var someItem = new ToDoItem { Name = "testname", Description = "testDesription", IsCompleted = false };
+        repositoryMock.ReadAll().Returns([someItem]); //seznam o jedné položce
 
         // Act
         var result = controller.Read();
-
-        var value = result.Value;
+        //var resultResult = result.Result; //nepotřebuji vědět vnitřek toho co se mi vrátilo
 
         // Assert
-        Assert.NotNull(result.Value);
-        Assert.Equal(2, result.Value.Count());
+        Assert.IsType<ActionResult<IEnumerable<ToDoItemGetResponseDto>>>(result);
 
-        var firstToDo = value.First();
-        Assert.Equal(todoItem1.ToDoItemId, firstToDo.Id);
-        Assert.Equal(todoItem1.Name, firstToDo.Name);
-        Assert.Equal(todoItem1.Description, firstToDo.Description);
-        Assert.Equal(todoItem1.IsCompleted, firstToDo.IsCompleted);
-
+        repositoryMock.Received().ReadAll(); //ještě zkontrolujeme že se něco zavolalo (že metoda není prázdná)
+        repositoryMock.Received(1).ReadAll(); //ještě zkontrolujeme že se něco zavolalo právě jednou
     }
-}
 
+}

@@ -5,16 +5,14 @@ namespace ToDoList.Persistence.Repositories
     public interface IRepository<T>
     where T : class
     {
-        public void Create(T item); //doplnit
+        public void Create(T item);
         // Read
-        T? GetById(int id);
-        IEnumerable<T> GetAll();
+        public T? ReadById(int id); //může vrátit nulovou hodnotu (nullable)
+        public IEnumerable<T> ReadAll();
 
         // Update
-        void Update(T item);
+        public void Update(T item);
 
-        void Add(T entity);
-
-        void DeleteById(int id);
+        public void DeleteById(int id);
     }
 }

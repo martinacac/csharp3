@@ -10,31 +10,22 @@ public class ToDoItemsRepository : IRepository<ToDoItem>
     {
         this.context = context;
     }
-    public void Create(ToDoItem item)
+    public void Create(ToDoItem item) //add
     {
         context.ToDoItems.Add(item);
         context.SaveChanges();
     }
 
-    public ToDoItem? GetById(int Id)
-    {
-        return context.ToDoItems.Find(Id);
-    }
+    public ToDoItem? ReadById(int id) => context.ToDoItems.Find(id);//místo {return context.ToDoItems.Find(id);}
 
-    public IEnumerable<ToDoItem> GetAll()
+    public IEnumerable<ToDoItem> ReadAll() //GetAll()
     {
         return context.ToDoItems.ToList();
     }
 
-    public void Add(ToDoItem item)
+    public void DeleteById(int id)
     {
-        context.ToDoItems.Add(item);
-        context.SaveChanges();
-    }
-
-    public void DeleteById(int Id)
-    {
-        var item = context.ToDoItems.Find(Id);
+        var item = context.ToDoItems.Find(id);
         if (item != null)
         {
             context.ToDoItems.Remove(item);

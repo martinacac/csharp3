@@ -19,7 +19,8 @@ public class PostTests
         //var connectionString = "Data Source=../../../IntegrationTests/data/localdb_test.db"; //nepotřebuji if using NSubstitute
         //using var context = new ToDoItemsContext(connectionString); //nepotřebuji if using NSubstitute
         var repositoryMock = Substitute.For<IRepository<ToDoItem>>();
-        var controller = new ToDoItemsController(context: null, repository: repositoryMock);
+        //var controller = new ToDoItemsController(context: null, repository: repositoryMock);
+        var controller = new ToDoItemsController(repositoryMock);
         var request = new ToDoItemCreateRequestDto(
             Name: "Jmeno",
             Description: "Popis",

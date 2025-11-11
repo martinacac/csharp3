@@ -25,9 +25,10 @@ public class PutTests
             IsCompleted = false
         };
 
-        repositoryMock.GetById(existingItem.ToDoItemId).Returns(existingItem);
+        repositoryMock.ReadById(existingItem.ToDoItemId).Returns(existingItem);
 
-        var controller = new ToDoItemsController(context: null, repository: repositoryMock);
+        //var controller = new ToDoItemsController(context: null, repository: repositoryMock);
+        var controller = new ToDoItemsController(repositoryMock);
 
         var request = new ToDoItemUpdateRequestDto(
             Name: "Jine jmeno",
@@ -37,7 +38,7 @@ public class PutTests
 
         // Act
         var result = controller.UpdateById(existingItem.ToDoItemId, request);
-        
+
         // Assert
         Assert.IsType<NoContentResult>(result);
 
@@ -54,9 +55,10 @@ public class PutTests
     {
         // Arrange
         var repositoryMock = Substitute.For<IRepository<ToDoItem>>();
-        repositoryMock.GetById(Arg.Any<int>()).Returns((ToDoItem)null);
+        repositoryMock.ReadById(Arg.Any<int>()).Returns((ToDoItem)null);
 
-        var controller = new ToDoItemsController(context: null, repository: repositoryMock);
+        //var controller = new ToDoItemsController(context: null, repository: repositoryMock);
+        var controller = new ToDoItemsController(repository: repositoryMock);
 
         var request = new ToDoItemUpdateRequestDto(
             Name: "Jine jmeno",

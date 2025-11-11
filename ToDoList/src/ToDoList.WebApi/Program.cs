@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
     //configure DI
     //sem musíme přidat controllery takto:
     builder.Services.AddControllers();
+    builder.Services.AddSwaggerGen();
     //builder.Services.AddDbContext<ToDoItemsContext>();
     //EF Core context
     builder.Services.AddDbContext<ToDoItemsContext>(options => options.UseSqlite("Data Source=../../data/localdb.db"));
@@ -23,6 +24,8 @@ var app = builder.Build();
     }
     //configure Middleware (HTTP request pipeline)
     app.MapControllers(); //namapuji controllery
+    app.UseSwagger();
+    app.UseSwaggerUI(config => config.SwaggerEndpoint("v1/swagger.json", "ToDoList API V1"));
 }
 
 

@@ -13,12 +13,13 @@ using ToDoList.Persistence.Repositories;
 public class ToDoItemsController : ControllerBase
 {
     //public readonly List<ToDoItem> items = []; //po dopsání úkolu již není potřeba a můžeme smazat
-    private readonly ToDoItemsContext context;
+    //private readonly ToDoItemsContext context; //!!!dát pryč - už je v Repository
     private readonly IRepository<ToDoItem> repository;
 
-    public ToDoItemsController(ToDoItemsContext context, IRepository<ToDoItem> repository)
+    public ToDoItemsController(IRepository<ToDoItem> repository)
+    //public ToDoItemsController(ToDoItemsContext context, IRepository<ToDoItem> repository)
     {
-        this.context = context;
+        //this.context = context;
         this.repository = repository;
         //vytvoření úkolu pro odzkoušení a jeho uložení do tabulky ToDoItems (viz DbSet v ToDoItemsContext):
         //ToDoItem item = new ToDoItem { Name = "Prvni ukol", Description = "prvni popisek", IsCompleted = false };
@@ -55,7 +56,7 @@ public class ToDoItemsController : ControllerBase
         try
         {
             //itemsToGet = context.ToDoItems.ToList();
-            var items = this.repository.GetAll();
+            var items = this.repository.ReadAll();
             if (items is null)
             {
                 return NotFound(); // 404
@@ -81,7 +82,8 @@ public class ToDoItemsController : ControllerBase
         ToDoItem? itemToGet;
         try
         {
-            itemToGet = context.ToDoItems.Find(toDoItemId);
+            //itemToGet = context.ToDoItems.Find(toDoItemId);
+            itemToGet = repository.ReadById(toDoItemId);
         }
         catch (Exception ex)
         {
@@ -104,7 +106,7 @@ public class ToDoItemsController : ControllerBase
         try
         {
             //retrieve the item
-            var itemToUpdate = repository?.GetById(toDoItemId); //context.ToDoItems.Find(toDoItemId);
+            var itemToUpdate = repository?.ReadById(toDoItemId); //context.ToDoItems.Find(toDoItemId);
             if (itemToUpdate is null)
             {
                 return NotFound(); //404
@@ -133,13 +135,15 @@ public class ToDoItemsController : ControllerBase
         //try to delete the item
         try
         {
-            var itemToDelete = context.ToDoItems.Find(toDoItemId);
+            //var itemToDelete = context.ToDoItems.Find(toDoItemId);
+            var itemToDelete = repository.ReadById(toDoItemId);
             if (itemToDelete is null)
             {
                 return NotFound(); //404
             }
-            context.ToDoItems.Remove(itemToDelete);
-            context.SaveChanges();
+            //context.ToDoItems.Remove(itemToDelete);
+            //context.SaveChanges();
+            repository.DeleteById(toDoItemId);
         }
         catch (Exception ex)
         {
