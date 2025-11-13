@@ -9,11 +9,12 @@ using NSubstitute;
 using ToDoList.Test;
 using ToDoList.Persistence.Repositories;
 using ToDoList.WebApi;
+using Microsoft.AspNetCore.Http;
 
 public class PutTests //Update
 {
     [Fact]
-    public void Put_ValidId_ReturnsNoContent()
+    public void Put_UpdateByIdWhenItemUpdated_ReturnsNoContent()
     {
         // Arrange
         var repositoryMock = Substitute.For<IRepository<ToDoItem>>();
@@ -27,8 +28,7 @@ public class PutTests //Update
 
         repositoryMock.ReadById(existingItem.ToDoItemId).Returns(existingItem);
 
-        //var controller = new ToDoItemsController(context: null, repository: repositoryMock);
-        var controller = new ToDoItemsController(repositoryMock);
+        var controller = new ToDoItemsController(context: null, repositoryMock);
 
         var request = new ToDoItemUpdateRequestDto(
             Name: "Jine jmeno",
@@ -51,7 +51,7 @@ public class PutTests //Update
         ));
     }
     [Fact]
-    public void Put_InvalidId_ReturnsNotFound()
+    public void Put_UpdateByIdWhenIdNotFound_ReturnsNotFound()
     {
         // Arrange
         var repositoryMock = Substitute.For<IRepository<ToDoItem>>();
@@ -73,6 +73,34 @@ public class PutTests //Update
         Assert.IsAssignableFrom<NotFoundResult>(result);
     }
 
+    [Fact]
+    public void Put_UpdateByIdUnhandledException_ReturnsInternalServerError()
+    {
+        // Arrange
+        var repositoryMock = Substitute.For<IRepository<ToDoItem>>();
+        var controller = new ToDoItemsController(context: null, repositoryMock);
+
+        var someId = 1;
+        var request = new ToDoItemUpdateRequestDto(
+            Name: "UpdatedName",
+            Description: "UpdatedDescription",
+            IsCompleted: true
+        );
+
+        // Simulate exception during repository.ReadById or Update
+        repositoryMock.ReadById(someId).Returns(new ToDoItem());
+        repositoryMock.When(r => r.Update(Arg.Any<ToDoItem>())).Do(_ => throw new Exception("Unexpected error"));
+
+        // Act
+        var result = controller.UpdateById(someId, request);
+
+        // Assert
+        var objectResult = Assert.IsType<ObjectResult>(result);
+        Assert.Equal(StatusCodes.Status500InternalServerError, objectResult.StatusCode);
+
+        repositoryMock.Received(1).ReadById(someId);
+        repositoryMock.Received(1).Update(Arg.Any<ToDoItem>());
+    }
 
 
     // public class PutTests
