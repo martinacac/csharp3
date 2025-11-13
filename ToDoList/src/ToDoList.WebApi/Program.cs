@@ -1,13 +1,18 @@
 using Microsoft.EntityFrameworkCore;
+using ToDoList.Domain.Models;
 using ToDoList.Persistence;
+using ToDoList.Persistence.Repositories;
 var builder = WebApplication.CreateBuilder(args);
 {
     //configure DI
     //sem musíme přidat controllery takto:
     builder.Services.AddControllers();
+    builder.Services.AddSwaggerGen();
     //builder.Services.AddDbContext<ToDoItemsContext>();
     //EF Core context
     builder.Services.AddDbContext<ToDoItemsContext>(options => options.UseSqlite("Data Source=../../data/localdb.db"));
+    builder.Services.AddScoped<IRepository<ToDoItem>, ToDoItemsRepository>(); //když se odkazuji na IRepository<ToDoItem> odkáže mě to na ToDoItemsRepository (implementace) a po celou dobu zpracování požadavku to bude stejná instance
+    //AddTransient - dává pokaždé jinou instanci
 }
 var app = builder.Build();
 {
@@ -19,6 +24,8 @@ var app = builder.Build();
     }
     //configure Middleware (HTTP request pipeline)
     app.MapControllers(); //namapuji controllery
+    app.UseSwagger();
+    app.UseSwaggerUI(config => config.SwaggerEndpoint("v1/swagger.json", "ToDoList API V1"));
 }
 
 

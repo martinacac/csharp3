@@ -3,12 +3,18 @@ namespace ToDoList.WebApi.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using ToDoList.Domain.DTOs;
 using ToDoList.Domain.Models;
+using ToDoList.Persistence.Repositories;
 
-[Route("api/[controller]")] //localhost:5000/api/ToDoItems
 [ApiController]
+[Route("api/[controller]")]
 public class ToDoItemsController : ControllerBase
 {
-    public readonly List<ToDoItem> items = [];
+    private readonly IRepository<ToDoItem> repository;
+
+    public ToDoItemsController(IRepository<ToDoItem> repository)
+    {
+        this.repository = repository;
+    }
 
     [HttpPost]
     public ActionResult<ToDoItemGetResponseDto> Create(ToDoItemCreateRequestDto request)
@@ -19,8 +25,7 @@ public class ToDoItemsController : ControllerBase
         //try to create an item
         try
         {
-            item.ToDoItemId = items.Count == 0 ? 1 : items.Max(o => o.ToDoItemId) + 1;
-            items.Add(item);
+            repository.Create(item);
         }
         catch (Exception ex)
         {
@@ -37,10 +42,10 @@ public class ToDoItemsController : ControllerBase
     [HttpGet]
     public ActionResult<IEnumerable<ToDoItemGetResponseDto>> Read()
     {
-        List<ToDoItem> itemsToGet;
+        IEnumerable<ToDoItem> itemsToGet;
         try
         {
-            itemsToGet = items;
+            itemsToGet = repository.ReadAll();
         }
         catch (Exception ex)
         {
@@ -60,7 +65,7 @@ public class ToDoItemsController : ControllerBase
         ToDoItem? itemToGet;
         try
         {
-            itemToGet = items.Find(i => i.ToDoItemId == toDoItemId);
+            itemToGet = repository.ReadById(toDoItemId);
         }
         catch (Exception ex)
         {
@@ -78,18 +83,19 @@ public class ToDoItemsController : ControllerBase
     {
         //map to Domain object as soon as possible
         var updatedItem = request.ToDomain();
+        updatedItem.ToDoItemId = toDoItemId;
 
         //try to update the item by retrieving it with given id
         try
         {
             //retrieve the item
-            var itemIndexToUpdate = items.FindIndex(i => i.ToDoItemId == toDoItemId);
-            if (itemIndexToUpdate == -1)
+            var itemToUpdate = repository.ReadById(toDoItemId);
+            if (itemToUpdate is null)
             {
                 return NotFound(); //404
             }
-            updatedItem.ToDoItemId = toDoItemId;
-            items[itemIndexToUpdate] = updatedItem;
+
+            repository.Update(updatedItem);
         }
         catch (Exception ex)
         {
@@ -106,12 +112,13 @@ public class ToDoItemsController : ControllerBase
         //try to delete the item
         try
         {
-            var itemToDelete = items.Find(i => i.ToDoItemId == toDoItemId);
+            var itemToDelete = repository.ReadById(toDoItemId);
             if (itemToDelete is null)
             {
                 return NotFound(); //404
             }
-            items.Remove(itemToDelete);
+
+            repository.DeleteById(toDoItemId);
         }
         catch (Exception ex)
         {
@@ -120,10 +127,5 @@ public class ToDoItemsController : ControllerBase
 
         //respond to client
         return NoContent(); //204
-    }
-
-    public void AddItemToStorage(ToDoItem item)
-    {
-        items.Add(item);
     }
 }
