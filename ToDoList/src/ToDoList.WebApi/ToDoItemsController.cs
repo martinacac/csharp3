@@ -117,7 +117,7 @@ public class ToDoItemsController : ControllerBase
     }
 
     [HttpPut("{toDoItemId:int}")]
-    public IActionResult UpdateById(int toDoItemId, [FromBody] ToDoItemUpdateRequestDto request)
+    public async Task<IActionResult> UpdateById(int toDoItemId, [FromBody] ToDoItemUpdateRequestDto request)
     {
         //map to Domain object as soon as possible
         var updatedItem = request.ToDomain();
@@ -126,7 +126,11 @@ public class ToDoItemsController : ControllerBase
         try
         {
             //retrieve the item
-            var itemToUpdate = repository?.ReadById(toDoItemId); //context.ToDoItems.Find(toDoItemId);
+            //var itemToUpdate = repository?.ReadById(toDoItemId); //context.ToDoItems.Find(toDoItemId);
+            //Použij context, pokud není repository
+            var itemToUpdate = repository != null
+                ? repository.ReadById(toDoItemId)
+                : await context.ToDoItems.FindAsync(toDoItemId);
             if (itemToUpdate is null)
             {
                 return NotFound(); //404
@@ -137,7 +141,17 @@ public class ToDoItemsController : ControllerBase
             itemToUpdate.Description = updatedItem.Description;
             itemToUpdate.IsCompleted = updatedItem.IsCompleted;
 
-            repository?.Update(itemToUpdate);
+            if (repository != null)
+            {
+                repository.Update(itemToUpdate);
+            }
+            else
+            {
+                context.ToDoItems.Update(itemToUpdate);
+                await context.SaveChangesAsync(); // nezapomeň uložit
+            }
+
+            return NoContent(); // 204
             //context.SaveChanges();
         }
         catch (Exception ex)
@@ -146,7 +160,7 @@ public class ToDoItemsController : ControllerBase
         }
 
         //respond to client
-        return NoContent(); //204
+        //return NoContent(); //204
     }
 
     [HttpDelete("{toDoItemId:int}")]

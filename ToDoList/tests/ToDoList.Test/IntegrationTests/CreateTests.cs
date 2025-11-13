@@ -16,7 +16,7 @@ public class CreateTests
     public async Task Create_AddsItemToTestDatabase()
     {
         // Arrange
-        var context = TestUtils.TestDbContextFactory.CreateTestDbContext();
+        await using var context = TestUtils.TestDbContextFactory.CreateTestDbContext();
         var controller = new ToDoItemsController(context: context, repository: null); //if nepoužívám mock tak jen 1 parametr (context)
 
         var request = new ToDoItemCreateRequestDto("Test", "Popis", false);
@@ -37,7 +37,7 @@ public class CreateTests
     public async Task Create_ReturnsBadRequest_WhenNameIsNull()
     {
         // Arrange
-        var context = TestUtils.TestDbContextFactory.CreateTestDbContext();
+        await using var context = TestUtils.TestDbContextFactory.CreateTestDbContext();
         var controller = new ToDoItemsController(context: context, repository: null);
 
         var request = new ToDoItemCreateRequestDto(

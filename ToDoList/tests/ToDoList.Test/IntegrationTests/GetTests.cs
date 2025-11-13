@@ -12,7 +12,7 @@ public class GetTests
     public async Task Read_ReturnsAllItems()
     {
         // Arrange
-        var context = TestUtils.TestDbContextFactory.CreateTestDbContext();
+        await using var context = TestUtils.TestDbContextFactory.CreateTestDbContext();
 
         context.ToDoItems.RemoveRange(context.ToDoItems); // Cleanup
         await context.SaveChangesAsync();
