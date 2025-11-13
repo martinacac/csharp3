@@ -67,19 +67,21 @@ public class ToDoItemsController : ControllerBase
         //     ToDoItemGetResponseDto.FromDomain(item)); //201
     }
     [HttpGet]
-    public ActionResult<IEnumerable<ToDoItemGetResponseDto>> Read()
+    public async Task<ActionResult<IEnumerable<ToDoItemGetResponseDto>>> Read()
     {
         //List<ToDoItem> itemsToGet;
 
         try
         {
             //itemsToGet = context.ToDoItems.ToList();
-            var items = this.repository.ReadAll();
+            var items = repository != null
+            ? repository.ReadAll()
+            : await context.ToDoItems.ToListAsync();
             if (items is null)
             {
                 return NotFound(); // 404
             }
-            var response = items.Select(ToDoItemGetResponseDto.FromDomain);
+            var response = items.Select(ToDoItemGetResponseDto.FromDomain).ToList(); //.ToList()
             return Ok(response);
         }
         catch (Exception ex)

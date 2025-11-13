@@ -14,7 +14,7 @@ using NSubstitute.ExceptionExtensions;
 public class GetTests //Read
 {
     [Fact]
-    public void Get_ReadWhenSomeItemAvailable_ReturnsOk()
+    public async Task Get_ReadWhenSomeItemAvailable_ReturnsOk()
     {
         // Arrange
         var repositoryMock = Substitute.For<IRepository<ToDoItem>>();
@@ -25,7 +25,7 @@ public class GetTests //Read
         repositoryMock.ReadAll().Returns(new List<ToDoItem> { someItem });
 
         // Act
-        var result = controller.Read();
+        var result = await controller.Read();
         //var resultResult = result.Result; //if nepotřebuji vědět vnitřek toho co se mi vrátilo
 
         // Assert
@@ -47,7 +47,7 @@ public class GetTests //Read
     }
 
     [Fact]
-    public void Get_ReadWhenNoItemAvailable_ReturnsNotFound()
+    public async Task Get_ReadWhenNoItemAvailable_ReturnsNotFound()
     {
         // Arrange
         var repositoryMock = Substitute.For<IRepository<ToDoItem>>();
@@ -57,7 +57,7 @@ public class GetTests //Read
         repositoryMock.ReadAll().Returns((IEnumerable<ToDoItem>)null);
 
         // Act
-        var result = controller.Read();
+        var result = await controller.Read();
 
         // Assert
         Assert.IsType<NotFoundResult>(result.Result);
@@ -65,7 +65,7 @@ public class GetTests //Read
     }
 
     [Fact]
-    public void Get_ReadUnhandledException_ReturnsInternalServerError()
+    public async Task Get_ReadUnhandledException_ReturnsInternalServerError()
     {
         // Arrange
         var repositoryMock = Substitute.For<IRepository<ToDoItem>>();
@@ -75,7 +75,7 @@ public class GetTests //Read
         repositoryMock.ReadAll().Throws(new Exception("Unexpected error"));
 
         // Act
-        var result = controller.Read();
+        var result = await controller.Read();
 
         // Assert
         Assert.IsType<ObjectResult>(result.Result);
@@ -85,7 +85,7 @@ public class GetTests //Read
         repositoryMock.Received(1).ReadAll();
     }
     [Fact]
-    public void Get_ReadByIdWhenSomeItemAvailable_ReturnsOk()
+    public async Task Get_ReadByIdWhenSomeItemAvailable_ReturnsOk()
     {
         // Arrange
         var repositoryMock = Substitute.For<IRepository<ToDoItem>>();
@@ -117,7 +117,7 @@ public class GetTests //Read
         repositoryMock.Received(1).ReadById(someId);
     }
     [Fact]
-    public void Get_ReadByIdWhenItemIsNull_ReturnsNotFound()
+    public async Task Get_ReadByIdWhenItemIsNull_ReturnsNotFound()
     {
         // Arrange
         var repositoryMock = Substitute.For<IRepository<ToDoItem>>();
@@ -136,7 +136,7 @@ public class GetTests //Read
         repositoryMock.Received(1).ReadById(someId);
     }
     [Fact]
-    public void Get_ReadByIdUnhandledException_ReturnsInternalServerError()
+    public async Task Get_ReadByIdUnhandledException_ReturnsInternalServerError()
     {
         // Arrange
         var repositoryMock = Substitute.For<IRepository<ToDoItem>>();

@@ -17,5 +17,14 @@ public class ToDoItemsContext : DbContext
     //{
     //    optionsBuilder.UseSqlite(connectionString);
     //}
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<ToDoItem>()
+            .HasKey(t => t.ToDoItemId);
+
+        modelBuilder.Entity<ToDoItem>()
+            .Property(t => t.ToDoItemId)
+            .ValueGeneratedOnAdd(); // důležité pro testy a SQLite
+    }
 
 }

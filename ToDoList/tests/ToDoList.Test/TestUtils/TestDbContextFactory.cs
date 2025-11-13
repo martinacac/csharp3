@@ -22,10 +22,10 @@ public static class TestDbContextFactory
             .Options;
 
         var context = new ToDoItemsContext(options);
-        context.Database.Migrate(); // applies migrations
-        //context.Database.EnsureDeleted(); // optional: reset before each test
+        context.Database.EnsureDeleted();
+        //context.Database.EnsureCreated();
+        context.Database.Migrate(); // creates + applies migrations
 
-        context.Database.EnsureCreated();
         return context;
     }
 }
