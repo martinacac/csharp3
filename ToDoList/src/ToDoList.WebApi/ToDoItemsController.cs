@@ -13,14 +13,13 @@ using ToDoList.Persistence.Repositories;
 public class ToDoItemsController : ControllerBase
 {
     //public readonly List<ToDoItem> items = []; //po dopsání úkolu již není potřeba a můžeme smazat
-    private readonly ToDoItemsContext context; //!!!dát pryč - už je v Repository, ale potřebuji ho na IntegrationTests
+    //private readonly ToDoItemsContext context; //!!!dát pryč - už je v Repository
     private readonly IRepository<ToDoItem> repository;
 
-    //public ToDoItemsController(IRepository<ToDoItem> repository)
+    public ToDoItemsController(IRepository<ToDoItem> repository)
     //public ToDoItemsController(ToDoItemsContext context, IRepository<ToDoItem> repository)
-    public ToDoItemsController(ToDoItemsContext context = null, IRepository<ToDoItem> repository = null) //Tím umožníš controlleru přijmout buď context, nebo repository, nebo oba — a testy si vyberou, co potřebují
     {
-        this.context = context;
+        //this.context = context;
         this.repository = repository;
         //vytvoření úkolu pro odzkoušení a jeho uložení do tabulky ToDoItems (viz DbSet v ToDoItemsContext):
         //ToDoItem item = new ToDoItem { Name = "Prvni ukol", Description = "prvni popisek", IsCompleted = false };
@@ -28,32 +27,15 @@ public class ToDoItemsController : ControllerBase
         //context.SaveChanges();
     }
     [HttpPost]
-    public async Task<ActionResult<ToDoItemGetResponseDto>> Create(ToDoItemCreateRequestDto request)
+    public ActionResult<ToDoItemGetResponseDto> Create(ToDoItemCreateRequestDto request)
     {
+        //map to Domain object as soon as possible
+        var item = request.ToDomain();
+
         //try to create an item
         try
         {
-            if (string.IsNullOrWhiteSpace(request.Name) || string.IsNullOrWhiteSpace(request.Description))
-            {
-                return BadRequest("Name and Description are required.");
-            }
-            var item = request.ToDomain();
-            if (repository != null)
-            {
-                repository.Create(item);
-            }
-            else if (context != null)
-            {
-                context.ToDoItems.Add(item);
-                await context.SaveChangesAsync();
-            }
-            else
-            {
-                return Problem("No data source available", null, StatusCodes.Status500InternalServerError);
-            }
-
-            var response = ToDoItemGetResponseDto.FromDomain(item);
-            return CreatedAtAction(nameof(ReadById), new { id = item.ToDoItemId }, response);
+            repository.Create(item);
         }
         catch (Exception ex)
         {
@@ -61,10 +43,10 @@ public class ToDoItemsController : ControllerBase
         }
 
         //respond to client
-        // return CreatedAtAction(
-        //     nameof(ReadById),
-        //     new { toDoItemId = item.ToDoItemId },
-        //     ToDoItemGetResponseDto.FromDomain(item)); //201
+        return CreatedAtAction(
+            nameof(ReadById),
+            new { toDoItemId = item.ToDoItemId },
+            ToDoItemGetResponseDto.FromDomain(item)); //201
     }
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ToDoItemGetResponseDto>>> Read()
@@ -164,39 +146,20 @@ public class ToDoItemsController : ControllerBase
     }
 
     [HttpDelete("{toDoItemId:int}")]
-    public async Task<IActionResult> DeleteById(int toDoItemId)
+    public IActionResult DeleteById(int toDoItemId)
     {
         //try to delete the item
         try
         {
             //var itemToDelete = context.ToDoItems.Find(toDoItemId);
-            //var itemToDelete = repository.ReadById(toDoItemId);
-            // if (itemToDelete is null)
-            // {
-            //     return NotFound(); //404
-            // }
+            var itemToDelete = repository.ReadById(toDoItemId);
+            if (itemToDelete is null)
+            {
+                return NotFound(); //404
+            }
             //context.ToDoItems.Remove(itemToDelete);
             //context.SaveChanges();
-            //repository.DeleteById(toDoItemId);
-
-            var item = repository != null
-            ? repository.ReadById(toDoItemId)
-            : await context.ToDoItems.FindAsync(toDoItemId);
-
-            if (item == null)
-            {
-                return NotFound();//404
-            }
-
-            if (repository != null)
-            {
-                repository.DeleteById(toDoItemId);
-            }
-            else
-            {
-                context.ToDoItems.Remove(item);
-                await context.SaveChangesAsync();
-            }
+            repository.DeleteById(toDoItemId);
         }
         catch (Exception ex)
         {

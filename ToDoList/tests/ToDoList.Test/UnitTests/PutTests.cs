@@ -9,7 +9,6 @@ using NSubstitute;
 using ToDoList.Test;
 using ToDoList.Persistence.Repositories;
 using ToDoList.WebApi;
-using Microsoft.AspNetCore.Http;
 
 public class PutTests //Update
 {
@@ -28,7 +27,8 @@ public class PutTests //Update
 
         repositoryMock.ReadById(existingItem.ToDoItemId).Returns(existingItem);
 
-        var controller = new ToDoItemsController(context: null, repositoryMock);
+        //var controller = new ToDoItemsController(context: null, repository: repositoryMock);
+        var controller = new ToDoItemsController(repositoryMock);
 
         var request = new ToDoItemUpdateRequestDto(
             Name: "Jine jmeno",
