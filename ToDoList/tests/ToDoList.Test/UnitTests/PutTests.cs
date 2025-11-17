@@ -9,11 +9,12 @@ using NSubstitute;
 using ToDoList.Test;
 using ToDoList.Persistence.Repositories;
 using ToDoList.WebApi;
+using Microsoft.AspNetCore.Http;
 
 public class PutTests //Update
 {
     [Fact]
-    public async Task Put_UpdateByIdWhenItemUpdated_ReturnsNoContent()
+    public void Put_UpdateByIdWhenItemUpdated_ReturnsNoContent()
     {
         // Arrange
         var repositoryMock = Substitute.For<IRepository<ToDoItem>>();
@@ -37,7 +38,7 @@ public class PutTests //Update
         );
 
         // Act
-        var result = await controller.UpdateById(existingItem.ToDoItemId, request);
+        var result = controller.UpdateById(existingItem.ToDoItemId, request);
 
         // Assert
         Assert.IsType<NoContentResult>(result);
@@ -51,7 +52,7 @@ public class PutTests //Update
         ));
     }
     [Fact]
-    public async Task Put_UpdateByIdWhenIdNotFound_ReturnsNotFound()
+    public void Put_UpdateByIdWhenIdNotFound_ReturnsNotFound()
     {
         // Arrange
         var repositoryMock = Substitute.For<IRepository<ToDoItem>>();
@@ -67,18 +68,18 @@ public class PutTests //Update
         );
 
         // Act
-        var result = await controller.UpdateById(-1, request);
+        var result = controller.UpdateById(-1, request);
 
         // Assert
         Assert.IsAssignableFrom<NotFoundResult>(result);
     }
 
     [Fact]
-    public async Task Put_UpdateByIdUnhandledException_ReturnsInternalServerError()
+    public void Put_UpdateByIdUnhandledException_ReturnsInternalServerError()
     {
         // Arrange
         var repositoryMock = Substitute.For<IRepository<ToDoItem>>();
-        var controller = new ToDoItemsController(context: null, repositoryMock);
+        var controller = new ToDoItemsController(repositoryMock);
 
         var someId = 1;
         var request = new ToDoItemUpdateRequestDto(
@@ -92,7 +93,7 @@ public class PutTests //Update
         repositoryMock.When(r => r.Update(Arg.Any<ToDoItem>())).Do(_ => throw new Exception("Unexpected error"));
 
         // Act
-        var result = await controller.UpdateById(someId, request);
+        var result = controller.UpdateById(someId, request);
 
         // Assert
         var objectResult = Assert.IsType<ObjectResult>(result);

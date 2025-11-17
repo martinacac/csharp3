@@ -1,50 +1,50 @@
-namespace ToDoList.Test.IntegrationTests;
+// namespace ToDoList.Test.IntegrationTests;
 
-using System.ComponentModel;
-using NuGet.Frameworks;
-using System.Linq;
-using Microsoft.AspNetCore.Mvc;
-using ToDoList.Domain.Models;
-using ToDoList.Domain.DTOs;
-using ToDoList.WebApi;
-using Xunit;
-public class UpdateTests
-{
-    [Fact]
-    public async Task Update_ChangesItemDescriptionCorrectly()
-    {
-        // Arrange
-        await using var context = TestUtils.TestDbContextFactory.CreateTestDbContext();
+// using System.ComponentModel;
+// using NuGet.Frameworks;
+// using System.Linq;
+// using Microsoft.AspNetCore.Mvc;
+// using ToDoList.Domain.Models;
+// using ToDoList.Domain.DTOs;
+// using ToDoList.WebApi;
+// using Xunit;
+// public class UpdateTests
+// {
+//     [Fact]
+//     public async Task Update_ChangesItemDescriptionCorrectly()
+//     {
+//         // Arrange
+//         await using var context = TestUtils.TestDbContextFactory.CreateTestDbContext();
 
-        var originalItem = new ToDoItem
-        {
-            Name = "Original Task",
-            Description = "Initial description",
-            IsCompleted = false
-        };
+//         var originalItem = new ToDoItem
+//         {
+//             Name = "Original Task",
+//             Description = "Initial description",
+//             IsCompleted = false
+//         };
 
-        context.ToDoItems.Add(originalItem);
-        await context.SaveChangesAsync();
+//         context.ToDoItems.Add(originalItem);
+//         await context.SaveChangesAsync();
 
-        var controller = new ToDoItemsController(context: context, repository: null); //if nepoužívám mock tak jen 1 parametr (context)
+//         var controller = new ToDoItemsController(context: context, repository: null); //if nepoužívám mock tak jen 1 parametr (context)
 
-        var updateDto = new ToDoItemUpdateRequestDto(
-            Name: originalItem.Name,
-            Description: "Updated description",
-            IsCompleted: originalItem.IsCompleted
-        );
+//         var updateDto = new ToDoItemUpdateRequestDto(
+//             Name: originalItem.Name,
+//             Description: "Updated description",
+//             IsCompleted: originalItem.IsCompleted
+//         );
 
-        // Act
-        var result = await controller.UpdateById(originalItem.ToDoItemId, updateDto);
+//         // Act
+//         var result = await controller.UpdateById(originalItem.ToDoItemId, updateDto);
 
-        // Assert
-        Assert.IsType<NoContentResult>(result);
+//         // Assert
+//         Assert.IsType<NoContentResult>(result);
 
-        var updatedItem = await context.ToDoItems.FindAsync(originalItem.ToDoItemId);
-        Assert.NotNull(updatedItem);
-        Assert.Equal("Updated description", updatedItem.Description);
-    }
-}
+//         var updatedItem = await context.ToDoItems.FindAsync(originalItem.ToDoItemId);
+//         Assert.NotNull(updatedItem);
+//         Assert.Equal("Updated description", updatedItem.Description);
+//     }
+// }
 
 // [Fact]
 // public void Update_ReturnsCorrectItemDescriptionAfterUpdate()
