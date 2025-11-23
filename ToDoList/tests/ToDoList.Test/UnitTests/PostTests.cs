@@ -10,10 +10,12 @@ using ToDoList.Domain.Models;
 //using ToDoList.Test.IntegrationTests; //kvůli ActionResultExtensions.cs ale ten jsem si přesunula do složky výše
 using ToDoList.Test; //kvůli ActionResultExtensions.cs
 
+using Microsoft.AspNetCore.Http;
+
 public class PostTests //Create
 {
     [Fact]
-    public void Post_ValidRequest_ReturnsNewItem()
+    public void Post_CreateValidRequest_ReturnsCreatedAtAction()
     {
         // Arrange
         //var connectionString = "Data Source=../../../IntegrationTests/data/localdb_test.db"; //nepotřebuji if using NSubstitute
@@ -28,12 +30,15 @@ public class PostTests //Create
         );
 
         // Act
+        //var result = controller.Create(request);
         var result = controller.Create(request);
-        var resultResult = result.Result;
-        var value = result.GetValue();
+        //var resultResult = result.Result;
+        //var value = result.GetValue();
 
         // Assert
-        Assert.IsType<CreatedAtActionResult>(resultResult);
+        var resultResult = Assert.IsType<CreatedAtActionResult>(result.Result); //kontrola výsledku
+        //Assert.IsType<CreatedAtActionResult>(resultResult);
+        var value = Assert.IsType<ToDoItemGetResponseDto>(resultResult.Value); //získej DTO
         Assert.NotNull(value);
 
         Assert.Equal(request.Description, value.Description);
@@ -48,5 +53,36 @@ public class PostTests //Create
         //     context.SaveChanges();
         // }
     }
+
+    [Fact]
+    public async Task Post_CreateUnhandledException_ReturnsInternalServerError()
+    {
+        // Arrange
+        var repositoryMock = Substitute.For<IRepository<ToDoItem>>();
+        var controller = new ToDoItemsController(repositoryMock);
+
+        var request = new ToDoItemCreateRequestDto(
+            Name: "Jmeno",
+            Description: "Popis",
+            IsCompleted: false
+        );
+
+        // Simulate exception during repository.Create
+        repositoryMock
+            .When(r => r.Create(Arg.Any<ToDoItem>()))
+            .Do(_ => throw new Exception("Unexpected error"));
+
+        // Act
+        var result = controller.Create(request); //var result = controller.Create(request);
+        var resultResult = result.Result;
+
+        // Assert
+        //Assert.IsType<ObjectResult>(resultResult);
+        //var objectResult = (ObjectResult)resultResult;
+
+        var objectResult = Assert.IsType<ObjectResult>(resultResult);
+        Assert.Equal(StatusCodes.Status500InternalServerError, objectResult.StatusCode);
+    }
+
 }
 
