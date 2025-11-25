@@ -12,13 +12,17 @@ public class ToDoItemsClient : IToDoItemsClient
         this.httpClient = httpClient;
     }
 
-    public async Task<List<ToDoItemView>> ReadItems()
+    public async Task<List<ToDoItemView>> ReadItemsAsync()
     {
         var toDoItemViews = new List<ToDoItemView>();
         var response = await httpClient.GetFromJsonAsync<List<ToDoItemGetResponseDto>>("api/ToDoItems");
-        toDoItemViews = response.Select(dto => new ToDoItemView(dto.Id, dto.Name, dto.Description, dto.IsCompleted)).ToList();
-        //toDoItemViews = response.Result.Select(dto => new ToDoItemView(dto.Id, dto.Name, dto.Description, dto.IsCompleted)).ToList();
-        //if await nedávám Result
+
+        toDoItemViews = response.Select(dto => new ToDoItemView(
+            dto.Id,
+            dto.Name,
+            dto.Description,
+            dto.IsCompleted
+            )).ToList();
 
         return toDoItemViews;
     }
