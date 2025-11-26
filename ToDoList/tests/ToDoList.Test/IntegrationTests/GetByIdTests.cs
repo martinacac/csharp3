@@ -9,7 +9,7 @@ using ToDoList.WebApi;
 public class GetByIdTests
 {
     [Fact]
-    public void GetById_ValidId_ReturnsItem()
+    public async Task GetById_ValidId_ReturnsItem()
     {
         // Arrange
         var connectionString = "Data Source=../../../IntegrationTests/data/localdb_test.db";
@@ -24,10 +24,10 @@ public class GetByIdTests
             IsCompleted = false
         };
         context.ToDoItems.Add(toDoItem);
-        context.SaveChanges();
+        context.SaveChangesAsync();
 
         // Act
-        var result = controller.ReadById(toDoItem.ToDoItemId);
+        var result = await controller.ReadById(toDoItem.ToDoItemId);
         var resultResult = result.Result;
         var value = result.GetValue();
 
@@ -42,11 +42,11 @@ public class GetByIdTests
 
         // Cleanup
         context.ToDoItems.Remove(toDoItem);
-        context.SaveChanges();
+        context.SaveChangesAsync();
     }
 
     [Fact]
-    public void GetById_InvalidId_ReturnsNotFound()
+    public async Task GetById_InvalidId_ReturnsNotFound()
     {
         // Arrange
         var connectionString = "Data Source=../../../IntegrationTests/data/localdb_test.db";
@@ -56,7 +56,7 @@ public class GetByIdTests
 
         // Act
         var invalidId = -1;
-        var result = controller.ReadById(invalidId);
+        var result = await controller.ReadById(invalidId);
         var resultResult = result.Result;
 
         // Assert
