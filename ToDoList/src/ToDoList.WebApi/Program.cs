@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
     //builder.Services.AddDbContext<ToDoItemsContext>();
     //EF Core context
     builder.Services.AddDbContext<ToDoItemsContext>(options => options.UseSqlite("Data Source=../../data/localdb.db"));
-    builder.Services.AddScoped<IRepository<ToDoItem>, ToDoItemsRepository>(); //když se odkazuji na IRepository<ToDoItem> odkáže mě to na ToDoItemsRepository (implementace) a po celou dobu zpracování požadavku to bude stejná instance
+    builder.Services.AddScoped<IRepositoryAsync<ToDoItem>, ToDoItemsRepository>(); //když se odkazuji na IRepository<ToDoItem> odkáže mě to na ToDoItemsRepository (implementace) a po celou dobu zpracování požadavku to bude stejná instance
     //AddTransient - dává pokaždé jinou instanci
 }
 var app = builder.Build();
