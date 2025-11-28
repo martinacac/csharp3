@@ -25,7 +25,7 @@ public class DeleteTests
             IsCompleted = false
         };
         context.ToDoItems.Add(toDoItem);
-        context.SaveChangesAsync();
+        await context.SaveChangesAsync();
 
         // Act
         var result = await controller.DeleteById(toDoItem.ToDoItemId);

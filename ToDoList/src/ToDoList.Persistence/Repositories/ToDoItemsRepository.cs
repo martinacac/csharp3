@@ -1,5 +1,6 @@
 namespace ToDoList.Persistence.Repositories;
 
+using Microsoft.EntityFrameworkCore;
 using ToDoList.Domain.Models;
 
 public class ToDoItemsRepository : IRepositoryAsync<ToDoItem> //implementace IRepository
@@ -13,14 +14,14 @@ public class ToDoItemsRepository : IRepositoryAsync<ToDoItem> //implementace IRe
     public async Task Create(ToDoItem item) //add
     {
         context.ToDoItems.Add(item);
-        context.SaveChangesAsync();
+        await context.SaveChangesAsync();
     }
 
-    public async Task<ToDoItem?> ReadById(int id) => context.ToDoItems.Find(id);//místo {return context.ToDoItems.Find(id);}
+    public async Task<ToDoItem?> ReadById(int id) => await context.ToDoItems.FindAsync(id); //=> context.ToDoItems.Find(id);//místo {return context.ToDoItems.Find(id);}
 
     public async Task<IEnumerable<ToDoItem>> ReadAll() //GetAll()
     {
-        return context.ToDoItems.ToList();
+        return await context.ToDoItems.ToListAsync();
     }
 
     public async Task DeleteById(int id)
@@ -29,14 +30,14 @@ public class ToDoItemsRepository : IRepositoryAsync<ToDoItem> //implementace IRe
         if (item != null)
         {
             context.ToDoItems.Remove(item);
-            context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
     }
 
     public async Task Update(ToDoItem item)
     {
         context.ToDoItems.Update(item);
-        context.SaveChangesAsync();
+        await context.SaveChangesAsync();
     }
 }
 

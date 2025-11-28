@@ -31,7 +31,7 @@ public class GetTests
 
         context.ToDoItems.Add(todoItem1);
         context.ToDoItems.Add(todoItem2);
-        context.SaveChangesAsync();
+        await context.SaveChangesAsync();
 
         // Act
         var result = await controller.Read();
@@ -49,7 +49,7 @@ public class GetTests
         // Cleanup
         context.ToDoItems.Remove(todoItem1);
         context.ToDoItems.Remove(todoItem2);
-        context.SaveChangesAsync();
+        await context.SaveChangesAsync();
     }
 }
 
