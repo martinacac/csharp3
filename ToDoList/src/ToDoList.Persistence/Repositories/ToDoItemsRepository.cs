@@ -11,20 +11,20 @@ public class ToDoItemsRepository : IRepositoryAsync<ToDoItem> //implementace IRe
     {
         this.context = context;
     }
-    public async Task Create(ToDoItem item) //add
+    public async Task CreateAsync(ToDoItem item) //add
     {
         context.ToDoItems.Add(item);
         await context.SaveChangesAsync();
     }
 
-    public async Task<ToDoItem?> ReadById(int id) => await context.ToDoItems.FindAsync(id); //=> context.ToDoItems.Find(id);//místo {return context.ToDoItems.Find(id);}
+    public async Task<ToDoItem?> ReadByIdAsync(int id) => await context.ToDoItems.FindAsync(id); //=> context.ToDoItems.Find(id);//místo {return context.ToDoItems.Find(id);}
 
-    public async Task<IEnumerable<ToDoItem>> ReadAll() //GetAll()
+    public async Task<IEnumerable<ToDoItem>> ReadAllAsync() //GetAll()
     {
         return await context.ToDoItems.ToListAsync();
     }
 
-    public async Task DeleteById(int id)
+    public async Task DeleteByIdAsync(int id)
     {
         var item = context.ToDoItems.Find(id);
         if (item != null)
@@ -34,7 +34,7 @@ public class ToDoItemsRepository : IRepositoryAsync<ToDoItem> //implementace IRe
         }
     }
 
-    public async Task Update(ToDoItem item)
+    public async Task UpdateAsync(ToDoItem item)
     {
         context.ToDoItems.Update(item);
         await context.SaveChangesAsync();

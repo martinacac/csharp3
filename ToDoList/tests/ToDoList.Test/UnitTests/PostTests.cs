@@ -69,7 +69,7 @@ public class PostTests //Create
 
         // Simulate exception during repository.Create
         repositoryMock
-            .When(r => r.Create(Arg.Any<ToDoItem>()))
+            .When(r => r.CreateAsync(Arg.Any<ToDoItem>()))
             .Do(_ => throw new Exception("Unexpected error"));
 
         // Act

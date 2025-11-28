@@ -19,14 +19,14 @@ namespace ToDoList.Persistence.Repositories
     public interface IRepositoryAsync<T>
     where T : class
     {
-        public Task Create(T item);
+        public Task CreateAsync(T item);
         // Read
-        public Task<T?> ReadById(int id); //může vrátit nulovou hodnotu (nullable)
-        public Task<IEnumerable<T>> ReadAll();
+        public Task<T?> ReadByIdAsync(int id); //může vrátit nulovou hodnotu (nullable)
+        public Task<IEnumerable<T>> ReadAllAsync();
 
         // Update
-        public Task Update(T item);
+        public Task UpdateAsync(T item);
 
-        public Task DeleteById(int id);
+        public Task DeleteByIdAsync(int id);
     }
 }

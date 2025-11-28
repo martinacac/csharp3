@@ -21,7 +21,7 @@ public class DeleteTests
         // Arrange
         var repositoryMock = Substitute.For<IRepositoryAsync<ToDoItem>>();
         var controller = new ToDoItemsController(repositoryMock);
-        repositoryMock.ReadById(Arg.Any<int>()).Returns(new ToDoItem { Name = "testItem", Description = "testDescription", IsCompleted = false });
+        repositoryMock.ReadByIdAsync(Arg.Any<int>()).Returns(new ToDoItem { Name = "testItem", Description = "testDescription", IsCompleted = false });
         var someId = 1;
 
         // Act
@@ -29,7 +29,7 @@ public class DeleteTests
 
         // Assert
         Assert.IsType<NoContentResult>(result);
-        repositoryMock.Received(1).ReadById(someId);
+        repositoryMock.Received(1).ReadByIdAsync(someId);
         repositoryMock.Received(1).DeleteById(someId);
     }
 
@@ -39,7 +39,7 @@ public class DeleteTests
         // Arrange
         var repositoryMock = Substitute.For<IRepositoryAsync<ToDoItem>>();
         var controller = new ToDoItemsController(repositoryMock);
-        repositoryMock.ReadById(Arg.Any<int>()).Returns(null as ToDoItem);
+        repositoryMock.ReadByIdAsync(Arg.Any<int>()).Returns(null as ToDoItem);
         var someId = 1;
 
         // Act
@@ -47,7 +47,7 @@ public class DeleteTests
 
         // Assert
         Assert.IsType<NotFoundResult>(result);
-        repositoryMock.Received(1).ReadById(someId);
+        repositoryMock.Received(1).ReadByIdAsync(someId);
         repositoryMock.Received(0).DeleteById(Arg.Any<int>()); // nothing was deleted
     }
 
@@ -57,7 +57,7 @@ public class DeleteTests
         // Arrange
         var repositoryMock = Substitute.For<IRepositoryAsync<ToDoItem>>();
         var controller = new ToDoItemsController(repositoryMock);
-        repositoryMock.ReadById(Arg.Any<int>()).Throws(new Exception());
+        repositoryMock.ReadByIdAsync(Arg.Any<int>()).Throws(new Exception());
         var someId = 1;
 
         // Act
@@ -65,7 +65,7 @@ public class DeleteTests
 
         // Assert
         Assert.IsType<ObjectResult>(result);
-        repositoryMock.Received(1).ReadById(someId);
+        repositoryMock.Received(1).ReadByIdAsync(someId);
         Assert.Equal(StatusCodes.Status500InternalServerError, ((ObjectResult)result).StatusCode);
     }
 
@@ -75,7 +75,7 @@ public class DeleteTests
         // Arrange
         var repositoryMock = Substitute.For<IRepositoryAsync<ToDoItem>>();
         var controller = new ToDoItemsController(repositoryMock);
-        repositoryMock.ReadById(Arg.Any<int>()).Returns(new ToDoItem { Name = "testItem", Description = "testDescription", IsCompleted = false });
+        repositoryMock.ReadByIdAsync(Arg.Any<int>()).Returns(new ToDoItem { Name = "testItem", Description = "testDescription", IsCompleted = false });
         repositoryMock.When(r => r.DeleteById(Arg.Any<int>())).Do(r => throw new Exception());
         var someId = 1;
 
@@ -84,7 +84,7 @@ public class DeleteTests
 
         // Assert
         Assert.IsType<ObjectResult>(result);
-        repositoryMock.Received(1).ReadById(someId);
+        repositoryMock.Received(1).ReadByIdAsync(someId);
         repositoryMock.Received(1).DeleteById(someId);
         Assert.Equal(StatusCodes.Status500InternalServerError, ((ObjectResult)result).StatusCode);
     }

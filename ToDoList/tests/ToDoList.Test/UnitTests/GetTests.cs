@@ -21,7 +21,7 @@ public class GetTests //Read
         var controller = new ToDoItemsController(repositoryMock); //odstranit context z controlleru!!!
         //konfigurace mocku
         var someItem = new ToDoItem { Name = "testname", Description = "testDesription", IsCompleted = false };
-        repositoryMock.ReadAll().Returns([someItem]); //seznam o jedné položce
+        repositoryMock.ReadAllAsync().Returns([someItem]); //seznam o jedné položce
 
         // Act
         var result = await controller.Read();
@@ -32,8 +32,8 @@ public class GetTests //Read
         var value = Assert.IsAssignableFrom<IEnumerable<ToDoItemGetResponseDto>>(okResult.Value);
         Assert.IsType<ActionResult<IEnumerable<ToDoItemGetResponseDto>>>(result);
 
-        repositoryMock.Received().ReadAll(); //ještě zkontrolujeme že se něco zavolalo (že metoda není prázdná)
-        repositoryMock.Received(1).ReadAll(); //ještě zkontrolujeme že se něco zavolalo právě jednou
+        repositoryMock.Received().ReadAllAsync(); //ještě zkontrolujeme že se něco zavolalo (že metoda není prázdná)
+        repositoryMock.Received(1).ReadAllAsync(); //ještě zkontrolujeme že se něco zavolalo právě jednou
 
         Assert.Equal(1, value.Count()); //Kontrola počtu položek
 
@@ -52,14 +52,14 @@ public class GetTests //Read
         var controller = new ToDoItemsController(repositoryMock);
 
         // Simulate repository returning null (or empty list)
-        repositoryMock.ReadAll().Returns((IEnumerable<ToDoItem>)null);
+        repositoryMock.ReadAllAsync().Returns((IEnumerable<ToDoItem>)null);
 
         // Act
         var result = await controller.Read();
 
         // Assert
         Assert.IsType<NotFoundResult>(result.Result);
-        repositoryMock.Received(1).ReadAll();
+        repositoryMock.Received(1).ReadAllAsync();
     }
 
     [Fact]
@@ -70,7 +70,7 @@ public class GetTests //Read
         var controller = new ToDoItemsController(repositoryMock);
 
         // Simulate an exception when ReadAll is called
-        repositoryMock.ReadAll().Throws(new Exception("Unexpected error"));
+        repositoryMock.ReadAllAsync().Throws(new Exception("Unexpected error"));
 
         // Act
         var result = await controller.Read();
@@ -80,7 +80,7 @@ public class GetTests //Read
         var objectResult = (ObjectResult)result.Result;
         Assert.Equal(StatusCodes.Status500InternalServerError, objectResult.StatusCode);
 
-        repositoryMock.Received(1).ReadAll();
+        repositoryMock.Received(1).ReadAllAsync();
     }
     [Fact]
     public async Task Get_ReadByIdWhenSomeItemAvailable_ReturnsOk()
@@ -98,7 +98,7 @@ public class GetTests //Read
             IsCompleted = false
         };
 
-        repositoryMock.ReadById(someId).Returns(item);
+        repositoryMock.ReadByIdAsync(someId).Returns(item);
 
         // Act
         var result = await controller.ReadById(someId);
@@ -112,7 +112,7 @@ public class GetTests //Read
         Assert.Equal(item.Description, value.Description);
         Assert.Equal(item.IsCompleted, value.IsCompleted);
 
-        repositoryMock.Received(1).ReadById(someId);
+        repositoryMock.Received(1).ReadByIdAsync(someId);
     }
     [Fact]
     public async Task Get_ReadByIdWhenItemIsNull_ReturnsNotFound()
@@ -124,14 +124,14 @@ public class GetTests //Read
         var someId = 1;
 
         // Simulate repository returning null for the given ID
-        repositoryMock.ReadById(someId).Returns((ToDoItem)null);
+        repositoryMock.ReadByIdAsync(someId).Returns((ToDoItem)null);
 
         // Act
         var result = await controller.ReadById(someId);
 
         // Assert
         Assert.IsType<NotFoundResult>(result.Result);
-        repositoryMock.Received(1).ReadById(someId);
+        repositoryMock.Received(1).ReadByIdAsync(someId);
     }
     [Fact]
     public async Task Get_ReadByIdUnhandledException_ReturnsInternalServerError()
@@ -143,7 +143,7 @@ public class GetTests //Read
         var someId = 1;
 
         // Simulate an exception when ReadById is called
-        repositoryMock.ReadById(someId).Throws(new Exception("Unexpected error"));
+        repositoryMock.ReadByIdAsync(someId).Throws(new Exception("Unexpected error"));
 
         // Act
         var result = await controller.ReadById(someId);
@@ -152,7 +152,7 @@ public class GetTests //Read
         var objectResult = Assert.IsType<ObjectResult>(result.Result);
         Assert.Equal(StatusCodes.Status500InternalServerError, objectResult.StatusCode);
 
-        repositoryMock.Received(1).ReadById(someId);
+        repositoryMock.Received(1).ReadByIdAsync(someId);
     }
 
 }

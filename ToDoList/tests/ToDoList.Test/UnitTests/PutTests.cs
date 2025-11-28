@@ -26,7 +26,7 @@ public class PutTests //Update
             IsCompleted = false
         };
 
-        repositoryMock.ReadById(existingItem.ToDoItemId).Returns(existingItem);
+        repositoryMock.ReadByIdAsync(existingItem.ToDoItemId).Returns(existingItem);
 
         //var controller = new ToDoItemsController(context: null, repository: repositoryMock);
         var controller = new ToDoItemsController(repositoryMock);
@@ -44,7 +44,7 @@ public class PutTests //Update
         Assert.IsType<NoContentResult>(result);
 
         // Verify update was called
-        repositoryMock.Received(1).Update(Arg.Is<ToDoItem>(item =>
+        repositoryMock.Received(1).UpdateAsync(Arg.Is<ToDoItem>(item =>
             item.ToDoItemId == existingItem.ToDoItemId &&
             item.Name == request.Name &&
             item.Description == request.Description &&
@@ -56,7 +56,7 @@ public class PutTests //Update
     {
         // Arrange
         var repositoryMock = Substitute.For<IRepositoryAsync<ToDoItem>>();
-        repositoryMock.ReadById(Arg.Any<int>()).Returns((ToDoItem)null);
+        repositoryMock.ReadByIdAsync(Arg.Any<int>()).Returns((ToDoItem)null);
 
         //var controller = new ToDoItemsController(context: null, repository: repositoryMock);
         var controller = new ToDoItemsController(repository: repositoryMock);
@@ -89,8 +89,8 @@ public class PutTests //Update
         );
 
         // Simulate exception during repository.ReadById or Update
-        repositoryMock.ReadById(someId).Returns(new ToDoItem());
-        repositoryMock.When(r => r.Update(Arg.Any<ToDoItem>())).Do(_ => throw new Exception("Unexpected error"));
+        repositoryMock.ReadByIdAsync(someId).Returns(new ToDoItem());
+        repositoryMock.When(r => r.UpdateAsync(Arg.Any<ToDoItem>())).Do(_ => throw new Exception("Unexpected error"));
 
         // Act
         var result = await controller.UpdateById(someId, request);
@@ -99,8 +99,8 @@ public class PutTests //Update
         var objectResult = Assert.IsType<ObjectResult>(result);
         Assert.Equal(StatusCodes.Status500InternalServerError, objectResult.StatusCode);
 
-        repositoryMock.Received(1).ReadById(someId);
-        repositoryMock.Received(1).Update(Arg.Any<ToDoItem>());
+        repositoryMock.Received(1).ReadByIdAsync(someId);
+        repositoryMock.Received(1).UpdateAsync(Arg.Any<ToDoItem>());
     }
 
 
