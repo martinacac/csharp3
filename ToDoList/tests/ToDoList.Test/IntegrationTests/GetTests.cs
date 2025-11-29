@@ -1,5 +1,6 @@
 namespace ToDoList.Test.IntegrationTests;
 
+using Microsoft.EntityFrameworkCore;
 using ToDoList.Domain.Models;
 using ToDoList.Persistence;
 using ToDoList.Persistence.Repositories;
@@ -17,7 +18,8 @@ public class GetTests
         var controller = new ToDoItemsController(repository);
 
         context.Database.EnsureDeleted();
-        context.Database.EnsureCreated();
+        context.Database.Migrate();
+
 
 
         var todoItem1 = new ToDoItem
