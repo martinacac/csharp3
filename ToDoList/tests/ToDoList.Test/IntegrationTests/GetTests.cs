@@ -16,6 +16,10 @@ public class GetTests
         var repository = new ToDoItemsRepository(context);
         var controller = new ToDoItemsController(repository);
 
+        context.Database.EnsureDeleted();
+        context.Database.EnsureCreated();
+
+
         var todoItem1 = new ToDoItem
         {
             Name = "Jmeno1",
