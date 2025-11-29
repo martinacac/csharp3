@@ -29,8 +29,8 @@ public class DeleteTests
 
         // Assert
         Assert.IsType<NoContentResult>(result);
-        repositoryMock.Received(1).ReadByIdAsync(someId);
-        repositoryMock.Received(1).DeleteById(someId);
+        await repositoryMock.Received(1).ReadByIdAsync(someId);
+        await repositoryMock.Received(1).DeleteByIdAsync(someId);
     }
 
     [Fact]
@@ -48,7 +48,7 @@ public class DeleteTests
         // Assert
         Assert.IsType<NotFoundResult>(result);
         repositoryMock.Received(1).ReadByIdAsync(someId);
-        repositoryMock.Received(0).DeleteById(Arg.Any<int>()); // nothing was deleted
+        repositoryMock.Received(0).DeleteByIdAsync(Arg.Any<int>()); // nothing was deleted
     }
 
     [Fact]
@@ -65,7 +65,7 @@ public class DeleteTests
 
         // Assert
         Assert.IsType<ObjectResult>(result);
-        repositoryMock.Received(1).ReadByIdAsync(someId);
+        await repositoryMock.Received(1).ReadByIdAsync(someId);
         Assert.Equal(StatusCodes.Status500InternalServerError, ((ObjectResult)result).StatusCode);
     }
 
@@ -76,7 +76,7 @@ public class DeleteTests
         var repositoryMock = Substitute.For<IRepositoryAsync<ToDoItem>>();
         var controller = new ToDoItemsController(repositoryMock);
         repositoryMock.ReadByIdAsync(Arg.Any<int>()).Returns(new ToDoItem { Name = "testItem", Description = "testDescription", IsCompleted = false });
-        repositoryMock.When(r => r.DeleteById(Arg.Any<int>())).Do(r => throw new Exception());
+        repositoryMock.When(r => r.DeleteByIdAsync(Arg.Any<int>())).Do(r => throw new Exception());
         var someId = 1;
 
         // Act
@@ -84,8 +84,8 @@ public class DeleteTests
 
         // Assert
         Assert.IsType<ObjectResult>(result);
-        repositoryMock.Received(1).ReadByIdAsync(someId);
-        repositoryMock.Received(1).DeleteById(someId);
+        await repositoryMock.Received(1).ReadByIdAsync(someId);
+        await repositoryMock.Received(1).DeleteByIdAsync(someId);
         Assert.Equal(StatusCodes.Status500InternalServerError, ((ObjectResult)result).StatusCode);
     }
 }
