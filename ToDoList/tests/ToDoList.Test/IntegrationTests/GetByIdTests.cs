@@ -24,7 +24,7 @@ public class GetByIdTests
             IsCompleted = false
         };
         context.ToDoItems.Add(toDoItem);
-        context.SaveChangesAsync();
+        await context.SaveChangesAsync();
 
         // Act
         var result = await controller.ReadById(toDoItem.ToDoItemId);
@@ -42,7 +42,7 @@ public class GetByIdTests
 
         // Cleanup
         context.ToDoItems.Remove(toDoItem);
-        context.SaveChangesAsync();
+        await context.SaveChangesAsync();
     }
 
     [Fact]

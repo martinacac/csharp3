@@ -13,7 +13,7 @@ public class ToDoItemsRepository : IRepositoryAsync<ToDoItem> //implementace IRe
     }
     public async Task CreateAsync(ToDoItem item) //add
     {
-        context.ToDoItems.Add(item);
+        await context.ToDoItems.AddAsync(item);
         await context.SaveChangesAsync();
     }
 
@@ -26,7 +26,7 @@ public class ToDoItemsRepository : IRepositoryAsync<ToDoItem> //implementace IRe
 
     public async Task DeleteByIdAsync(int id)
     {
-        var item = context.ToDoItems.Find(id);
+        var item = await context.ToDoItems.FindAsync(id);
         if (item != null)
         {
             context.ToDoItems.Remove(item);
