@@ -12,11 +12,11 @@
 <div>
     <h2>ToDo items dashboard</h2>
 
-    <table>
-        <thead>
+    <table class="table table-hover mt-3">
+        <thead class="table-dark">
             <tr>
-                <th>ID<button @onclick="OrderByID">Order by ID ↓</button></th>
-                <th>Název<button @onclick="OrderByName">Order by Name ↓</button></th>
+                <th>ID<button class="btn btn-primary" @onclick="OrderByID">Order by ID ↓</button></th>
+                <th>Název<button class="btn btn-primary" @onclick="OrderByName">Order by Name ↓</button></th>
                 <th>Popis</th>
                 <th>Dokončeno</th>
             </tr>
