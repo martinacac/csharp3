@@ -1,8 +1,9 @@
-﻿@using ToDoList.Frontend.Models
+﻿@using ToDoList.Domain.Models
+@using ToDoList.Frontend.Models
 @using ToDoList.Frontend.Clients
 @inject IToDoItemsClient toDoItemsClient
+@inject NavigationManager NavigationManager
 
-@rendermode InteractiveServer
 <div>
     <button @onclick="OrderByID">Order by ID</button>
 </div>
@@ -19,6 +20,7 @@
                 <th>Název<button class="btn btn-primary" @onclick="OrderByName">Order by Name ↓</button></th>
                 <th>Popis</th>
                 <th>Dokončeno</th>
+                <th>Akce</th>
             </tr>
         </thead>
         <tbody>
@@ -29,6 +31,7 @@
                     <td>@item.Name</td>
                     <td>@item.Description</td>
                     <td>@(item.IsCompleted ? "Dokonceny" : "Nedokonceny")</td>
+                    <td><button class="btn btn-success" @onclick="() => EditItem(item)">Editovat</button></td>
                 </tr>
             }
         </tbody>
@@ -39,12 +42,17 @@
 @code {
     private List<ToDoItemView> testData = new()
 {
-new ToDoItemView(1, "Nakoupit potraviny", "Mléko, chléb, vejce", false),
-new ToDoItemView(2, "Dokončit projekt", "Implementovat všechny funkce", true),
-new ToDoItemView(3, "Zavolat mamince", "Domluvit víkend", false),
-new ToDoItemView(4, "Cvičit", "Běhání v parku", false),
-new ToDoItemView(5, "Přečíst knihu", "Kapitola 5", true)
+//new ToDoItemView(1, "Nakoupit potraviny", "Mléko, chléb, vejce", false),
+new ToDoItemView(){Id=1, Name="Nakoupit potraviny", Description="Mléko, chléb, vejce", IsCompleted=false},
+//new ToDoItemView(2, "Dokončit projekt", "Implementovat všechny funkce", true),
+new ToDoItemView(){Id=2, Name="Dokončit projekt", Description="Implementovat všechny funkce", IsCompleted=true},
+//new ToDoItemView(3, "Zavolat mamince", "Domluvit víkend", false),
+new ToDoItemView(){Id=3, Name="Zavolat mamince", Description="Domluvit víkend", IsCompleted=false},
+//new ToDoItemView(4, "Cvičit", "Běhání v parku", false),
+new ToDoItemView(){Id=4, Name="Cvičit", Description="Běhání v parku", IsCompleted=false},
+new ToDoItemView(){Id=5, Name="Přečíst knihu", Description="Kapitola 5", IsCompleted=true}
 };
+
     private List<ToDoItemView> sortedData = new();
 
     protected override async Task OnInitializedAsync()
@@ -62,5 +70,10 @@ new ToDoItemView(5, "Přečíst knihu", "Kapitola 5", true)
     private void OrderByName()
     {
         sortedData = sortedData.OrderBy(item => item.Name).ToList();
+    }
+
+    public void EditItem(ToDoItemView toDoItem)
+    {
+        NavigationManager.NavigateTo($"editToDoItem/{toDoItem.Id}");
     }
 }
