@@ -45,7 +45,7 @@ public class PutTests
     // }
 
     [Fact]
-    public void Put_InvalidId_ReturnsNotFound()
+    public async Task Put_InvalidId_ReturnsNotFound()
     {
         // Arrange
         var connectionString = "Data Source=../../../IntegrationTests/data/localdb_test.db";
@@ -61,7 +61,7 @@ public class PutTests
 
         // Act
         var invalidId = -1;
-        var result = controller.UpdateById(invalidId, request);
+        var result = await controller.UpdateById(invalidId, request);
 
         // Assert
         Assert.IsType<NotFoundResult>(result);

@@ -15,4 +15,18 @@ namespace ToDoList.Persistence.Repositories
 
         public void DeleteById(int id);
     }
+
+    public interface IRepositoryAsync<T>
+    where T : class
+    {
+        public Task CreateAsync(T item);
+        // Read
+        public Task<T?> ReadByIdAsync(int id); //může vrátit nulovou hodnotu (nullable)
+        public Task<IEnumerable<T>> ReadAllAsync();
+
+        // Update
+        public Task UpdateAsync(T item);
+
+        public Task DeleteByIdAsync(int id);
+    }
 }

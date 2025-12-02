@@ -1,5 +1,6 @@
 namespace ToDoList.Test.IntegrationTests;
 
+using Microsoft.EntityFrameworkCore;
 using ToDoList.Domain.Models;
 using ToDoList.Persistence;
 using ToDoList.Persistence.Repositories;
@@ -8,7 +9,7 @@ using ToDoList.WebApi;
 public class GetTests
 {
     [Fact]
-    public void Get_AllItems_ReturnsAllItems()
+    public async Task Get_AllItems_ReturnsAllItems()
     {
         // Arrange
         var connectionString = "Data Source=../../../IntegrationTests/data/localdb_test.db";
@@ -31,10 +32,10 @@ public class GetTests
 
         context.ToDoItems.Add(todoItem1);
         context.ToDoItems.Add(todoItem2);
-        context.SaveChanges();
+        await context.SaveChangesAsync();
 
         // Act
-        var result = controller.Read();
+        var result = await controller.Read();
         var value = result.GetValue();
 
         // Assert
@@ -49,7 +50,7 @@ public class GetTests
         // Cleanup
         context.ToDoItems.Remove(todoItem1);
         context.ToDoItems.Remove(todoItem2);
-        context.SaveChanges();
+        await context.SaveChangesAsync();
     }
 }
 

@@ -3,7 +3,7 @@ namespace ToDoList.Test.IntegrationTests;
 public class CalculatorTest
 {
     [Fact]
-    public void Calculator_Add_ShouldReturnCorrectResult()
+    public async Task Calculator_Add_ShouldReturnCorrectResult()
     {
         //arrange
         var calculator = new Calculator();
@@ -13,7 +13,7 @@ public class CalculatorTest
         Assert.Equal(5, result);
     }
     [Fact]
-    public void Calculator_Divide_ShouldReturnCorrectResult()
+    public async Task Calculator_Divide_ShouldReturnCorrectResult()
     {
         // Arrange
         var calculator = new Calculator();

@@ -1,19 +1,30 @@
 ﻿@using ToDoList.Frontend.Models
+@using ToDoList.Frontend.Clients
+@inject IToDoItemsClient toDoItemsClient
+
+@rendermode InteractiveServer
+<div>
+    <button @onclick="OrderByID">Order by ID</button>
+</div>
+<div>
+    <button @onclick="OrderByName">Order by Name</button>
+</div>
 <div>
     <h2>ToDo items dashboard</h2>
+
     <table>
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Název</th>
+                <th>ID<button @onclick="OrderByID">Order by ID ↓</button></th>
+                <th>Název<button @onclick="OrderByName">Order by Name ↓</button></th>
                 <th>Popis</th>
                 <th>Dokončeno</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in testData)
+            @foreach (var item in sortedData)
             {
-                <tr>
+                <tr style="color:@(item.IsCompleted ? "green" : "black")">
                     <td>@item.Id</td>
                     <td>@item.Name</td>
                     <td>@item.Description</td>
@@ -22,6 +33,7 @@
             }
         </tbody>
     </table>
+
 </div>
 
 @code {
@@ -33,4 +45,22 @@ new ToDoItemView(3, "Zavolat mamince", "Domluvit víkend", false),
 new ToDoItemView(4, "Cvičit", "Běhání v parku", false),
 new ToDoItemView(5, "Přečíst knihu", "Kapitola 5", true)
 };
+    private List<ToDoItemView> sortedData = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        //sortedData = testData.ToList();
+
+        sortedData = await toDoItemsClient.ReadItemsAsync();
+    }
+
+    private void OrderByID()
+    {
+        sortedData = sortedData.OrderBy(item => item.Id).ToList();
+    }
+
+    private void OrderByName()
+    {
+        sortedData = sortedData.OrderBy(item => item.Name).ToList();
+    }
 }

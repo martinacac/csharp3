@@ -15,12 +15,12 @@ using Microsoft.AspNetCore.Http;
 public class PostTests //Create
 {
     [Fact]
-    public void Post_CreateValidRequest_ReturnsCreatedAtAction()
+    public async Task Post_CreateValidRequest_ReturnsCreatedAtAction()
     {
         // Arrange
         //var connectionString = "Data Source=../../../IntegrationTests/data/localdb_test.db"; //nepotřebuji if using NSubstitute
         //using var context = new ToDoItemsContext(connectionString); //nepotřebuji if using NSubstitute
-        var repositoryMock = Substitute.For<IRepository<ToDoItem>>();
+        var repositoryMock = Substitute.For<IRepositoryAsync<ToDoItem>>();
         //var controller = new ToDoItemsController(context: null, repository: repositoryMock);
         var controller = new ToDoItemsController(repositoryMock);
         var request = new ToDoItemCreateRequestDto(
@@ -31,7 +31,7 @@ public class PostTests //Create
 
         // Act
         //var result = controller.Create(request);
-        var result = controller.Create(request);
+        var result = await controller.Create(request);
         //var resultResult = result.Result;
         //var value = result.GetValue();
 
@@ -58,7 +58,7 @@ public class PostTests //Create
     public async Task Post_CreateUnhandledException_ReturnsInternalServerError()
     {
         // Arrange
-        var repositoryMock = Substitute.For<IRepository<ToDoItem>>();
+        var repositoryMock = Substitute.For<IRepositoryAsync<ToDoItem>>();
         var controller = new ToDoItemsController(repositoryMock);
 
         var request = new ToDoItemCreateRequestDto(
@@ -69,11 +69,11 @@ public class PostTests //Create
 
         // Simulate exception during repository.Create
         repositoryMock
-            .When(r => r.Create(Arg.Any<ToDoItem>()))
+            .When(r => r.CreateAsync(Arg.Any<ToDoItem>()))
             .Do(_ => throw new Exception("Unexpected error"));
 
         // Act
-        var result = controller.Create(request); //var result = controller.Create(request);
+        var result = await controller.Create(request); //var result = controller.Create(request);
         var resultResult = result.Result;
 
         // Assert

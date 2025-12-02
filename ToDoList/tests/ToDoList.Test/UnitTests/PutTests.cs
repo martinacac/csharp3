@@ -14,10 +14,10 @@ using Microsoft.AspNetCore.Http;
 public class PutTests //Update
 {
     [Fact]
-    public void Put_UpdateByIdWhenItemUpdated_ReturnsNoContent()
+    public async Task Put_UpdateByIdWhenItemUpdated_ReturnsNoContent()
     {
         // Arrange
-        var repositoryMock = Substitute.For<IRepository<ToDoItem>>();
+        var repositoryMock = Substitute.For<IRepositoryAsync<ToDoItem>>();
         var existingItem = new ToDoItem
         {
             ToDoItemId = 1,
@@ -26,7 +26,7 @@ public class PutTests //Update
             IsCompleted = false
         };
 
-        repositoryMock.ReadById(existingItem.ToDoItemId).Returns(existingItem);
+        repositoryMock.ReadByIdAsync(existingItem.ToDoItemId).Returns(existingItem);
 
         //var controller = new ToDoItemsController(context: null, repository: repositoryMock);
         var controller = new ToDoItemsController(repositoryMock);
@@ -38,13 +38,13 @@ public class PutTests //Update
         );
 
         // Act
-        var result = controller.UpdateById(existingItem.ToDoItemId, request);
+        var result = await controller.UpdateById(existingItem.ToDoItemId, request);
 
         // Assert
         Assert.IsType<NoContentResult>(result);
 
         // Verify update was called
-        repositoryMock.Received(1).Update(Arg.Is<ToDoItem>(item =>
+        repositoryMock.Received(1).UpdateAsync(Arg.Is<ToDoItem>(item =>
             item.ToDoItemId == existingItem.ToDoItemId &&
             item.Name == request.Name &&
             item.Description == request.Description &&
@@ -52,11 +52,11 @@ public class PutTests //Update
         ));
     }
     [Fact]
-    public void Put_UpdateByIdWhenIdNotFound_ReturnsNotFound()
+    public async Task Put_UpdateByIdWhenIdNotFound_ReturnsNotFound()
     {
         // Arrange
-        var repositoryMock = Substitute.For<IRepository<ToDoItem>>();
-        repositoryMock.ReadById(Arg.Any<int>()).Returns((ToDoItem)null);
+        var repositoryMock = Substitute.For<IRepositoryAsync<ToDoItem>>();
+        repositoryMock.ReadByIdAsync(Arg.Any<int>()).Returns((ToDoItem)null);
 
         //var controller = new ToDoItemsController(context: null, repository: repositoryMock);
         var controller = new ToDoItemsController(repository: repositoryMock);
@@ -68,17 +68,17 @@ public class PutTests //Update
         );
 
         // Act
-        var result = controller.UpdateById(-1, request);
+        var result = await controller.UpdateById(-1, request);
 
         // Assert
         Assert.IsAssignableFrom<NotFoundResult>(result);
     }
 
     [Fact]
-    public void Put_UpdateByIdUnhandledException_ReturnsInternalServerError()
+    public async Task Put_UpdateByIdUnhandledException_ReturnsInternalServerError()
     {
         // Arrange
-        var repositoryMock = Substitute.For<IRepository<ToDoItem>>();
+        var repositoryMock = Substitute.For<IRepositoryAsync<ToDoItem>>();
         var controller = new ToDoItemsController(repositoryMock);
 
         var someId = 1;
@@ -89,18 +89,18 @@ public class PutTests //Update
         );
 
         // Simulate exception during repository.ReadById or Update
-        repositoryMock.ReadById(someId).Returns(new ToDoItem());
-        repositoryMock.When(r => r.Update(Arg.Any<ToDoItem>())).Do(_ => throw new Exception("Unexpected error"));
+        repositoryMock.ReadByIdAsync(someId).Returns(new ToDoItem());
+        repositoryMock.When(r => r.UpdateAsync(Arg.Any<ToDoItem>())).Do(_ => throw new Exception("Unexpected error"));
 
         // Act
-        var result = controller.UpdateById(someId, request);
+        var result = await controller.UpdateById(someId, request);
 
         // Assert
         var objectResult = Assert.IsType<ObjectResult>(result);
         Assert.Equal(StatusCodes.Status500InternalServerError, objectResult.StatusCode);
 
-        repositoryMock.Received(1).ReadById(someId);
-        repositoryMock.Received(1).Update(Arg.Any<ToDoItem>());
+        repositoryMock.Received(1).ReadByIdAsync(someId);
+        repositoryMock.Received(1).UpdateAsync(Arg.Any<ToDoItem>());
     }
 
 
