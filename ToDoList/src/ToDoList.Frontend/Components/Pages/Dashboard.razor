@@ -31,7 +31,11 @@
                     <td>@item.Name</td>
                     <td>@item.Description</td>
                     <td>@(item.IsCompleted ? "Dokonceny" : "Nedokonceny")</td>
-                    <td><button class="btn btn-success" @onclick="() => EditItem(item)">Editovat</button></td>
+                    <td>
+                        <button class="btn btn-success" @onclick="() => EditItem(item)">Editovat</button>
+                        <button class="btn btn-danger" @onclick="() => DeleteItem(item)">Smazat</button>
+
+                    </td>
                 </tr>
             }
         </tbody>
@@ -75,5 +79,10 @@ new ToDoItemView(){Id=5, Name="Přečíst knihu", Description="Kapitola 5", IsCo
     public void EditItem(ToDoItemView toDoItem)
     {
         NavigationManager.NavigateTo($"editToDoItem/{toDoItem.Id}");
+    }
+
+    public void DeleteItemItem(ToDoItemView toDoItem)
+    {
+        NavigationManager.NavigateTo($"deleteToDoItem/{toDoItem.Id}");
     }
 }

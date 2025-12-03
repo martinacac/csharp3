@@ -1,4 +1,4 @@
-﻿@page "/editToDoItem/{ItemId:int}"
+﻿@page "/deleteToDoItem/{ItemId:int}"
 @using ToDoList.Frontend.Clients
 @using ToDoList.Frontend.Models
 
@@ -22,7 +22,7 @@
             <label for="IsCompleted" class="form-label">Is Completed</label>
             <InputCheckbox id="IsCompleted" @bind-Value="ToDoItemModel.IsCompleted" />
         </div>
-        <button type="submit">Odeslat</button>
+        <button type="submit">Smazat</button>
     </EditForm>
 }
 
