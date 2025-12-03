@@ -16,8 +16,8 @@
     <table class="table table-hover mt-3">
         <thead class="table-dark">
             <tr>
-                <th>ID<button class="btn btn-primary" @onclick="OrderByID">Order by ID ↓</button></th>
-                <th>Název<button class="btn btn-primary" @onclick="OrderByName">Order by Name ↓</button></th>
+                <th>ID<button class="btn btn-primary ml-3" @onclick="OrderByID">Order by ID ↓</button></th>
+                <th>Název<button class="btn btn-primary ml-3" @onclick="OrderByName">Order by Name ↓</button></th>
                 <th>Popis</th>
                 <th>Dokončeno</th>
                 <th>Akce</th>
@@ -34,6 +34,7 @@
                     <td>
                         <button class="btn btn-success" @onclick="() => EditItem(item)">Editovat</button>
                         <button class="btn btn-danger" @onclick="() => DeleteItem(item)">Smazat</button>
+                        <button class="btn btn-info" @onclick="() => ChangeCompleted(item)">Změnit dokončenost</button>
 
                     </td>
                 </tr>
@@ -81,8 +82,16 @@ new ToDoItemView(){Id=5, Name="Přečíst knihu", Description="Kapitola 5", IsCo
         NavigationManager.NavigateTo($"editToDoItem/{toDoItem.Id}");
     }
 
-    public void DeleteItemItem(ToDoItemView toDoItem)
+    public async Task DeleteItem(ToDoItemView toDoItem)
     {
-        NavigationManager.NavigateTo($"deleteToDoItem/{toDoItem.Id}");
+        //NavigationManager.NavigateTo($"deleteToDoItem/{toDoItem.Id}");
+        await toDoItemsClient.DeleteItemAsync(toDoItem);
+        StateHasChanged();
+    }
+
+    public async Task ChangeCompleted(ToDoItemView toDoItem)
+    {
+        toDoItem.IsCompleted = !toDoItem.IsCompleted;
+        await toDoItemsClient.UpdateItemAsync(toDoItem);
     }
 }

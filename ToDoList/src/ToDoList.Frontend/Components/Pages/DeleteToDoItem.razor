@@ -16,7 +16,7 @@
         </div>
         <div class="mb-3">
             <label for="Description" class="form-label">Description</label>
-            <InputText id="Description" @bind-Value="ToDoItemModel.Description" />
+            <InputText id="Description" @bind-Value="ToDoItemModel.Description" class="form-control" />
         </div>
         <div class="mb-3">
             <label for="IsCompleted" class="form-label">Is Completed</label>
@@ -40,7 +40,7 @@
 
     public async Task Submit()
     {
-        await toDoItemsClient.UpdateItemAsync(ToDoItemModel);
+        await toDoItemsClient.DeleteItemAsync(ToDoItemModel);
         NavigationManager.NavigateTo("/");
     }
 }
