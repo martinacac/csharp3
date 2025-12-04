@@ -19,6 +19,8 @@
                 <th>ID<button class="btn btn-primary ml-3" @onclick="OrderByID">Order by ID ↓</button></th>
                 <th>Název<button class="btn btn-primary ml-3" @onclick="OrderByName">Order by Name ↓</button></th>
                 <th>Popis</th>
+                <th>Kategorie<button class="btn btn-primary ml-3" @onclick="OrderByCategory">Order by Category
+                        ↓</button></th>
                 <th>Dokončeno</th>
                 <th>Akce</th>
             </tr>
@@ -30,6 +32,7 @@
                     <td>@item.Id</td>
                     <td>@item.Name</td>
                     <td>@item.Description</td>
+                    <td>@item.Category</td>
                     <td>@(item.IsCompleted ? "Dokonceny" : "Nedokonceny")</td>
                     <td>
                         <button class="btn btn-success" @onclick="() => EditItem(item)">Editovat</button>
@@ -75,6 +78,11 @@ new ToDoItemView(){Id=5, Name="Přečíst knihu", Description="Kapitola 5", IsCo
     private void OrderByName()
     {
         sortedData = sortedData.OrderBy(item => item.Name).ToList();
+    }
+
+    private void OrderByCategory()
+    {
+        sortedData = sortedData.OrderBy(item => item.Category).ToList();
     }
 
     public void EditItem(ToDoItemView toDoItem)

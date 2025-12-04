@@ -19,6 +19,10 @@
             <InputText id="Description" @bind-Value="ToDoItemModel.Description" class="form-control" />
         </div>
         <div class="mb-3">
+            <label for="Category" class="form-label">Category</label>
+            <InputText id="Category" @bind-Value="ToDoItemModel.Category" class="form-control" />
+        </div>
+        <div class="mb-3">
             <label for="IsCompleted" class="form-label">Is Completed</label>
             <InputCheckbox id="IsCompleted" @bind-Value="ToDoItemModel.IsCompleted" />
         </div>
