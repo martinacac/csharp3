@@ -34,7 +34,8 @@ public class PutTests //Update
         var request = new ToDoItemUpdateRequestDto(
             Name: "Jine jmeno",
             Description: "Jiny popis",
-            IsCompleted: true
+            IsCompleted: true,
+            Category: null
         );
 
         // Act
@@ -64,7 +65,8 @@ public class PutTests //Update
         var request = new ToDoItemUpdateRequestDto(
             Name: "Jine jmeno",
             Description: "Jiny popis",
-            IsCompleted: true
+            IsCompleted: true,
+            Category: null
         );
 
         // Act
@@ -85,7 +87,8 @@ public class PutTests //Update
         var request = new ToDoItemUpdateRequestDto(
             Name: "UpdatedName",
             Description: "UpdatedDescription",
-            IsCompleted: true
+            IsCompleted: true,
+            Category: null
         );
 
         // Simulate exception during repository.ReadById or Update

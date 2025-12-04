@@ -26,7 +26,8 @@ public class PostTests //Create
         var request = new ToDoItemCreateRequestDto(
             Name: "Jmeno",
             Description: "Popis",
-            IsCompleted: false
+            IsCompleted: false,
+            Category: ""
         );
 
         // Act
@@ -64,7 +65,8 @@ public class PostTests //Create
         var request = new ToDoItemCreateRequestDto(
             Name: "Jmeno",
             Description: "Popis",
-            IsCompleted: false
+            IsCompleted: false,
+            Category: null
         );
 
         // Simulate exception during repository.Create

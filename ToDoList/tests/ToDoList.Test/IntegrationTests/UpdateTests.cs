@@ -56,7 +56,8 @@ public class PutTests
         var request = new ToDoItemUpdateRequestDto(
             Name: "Jine jmeno",
             Description: "Jiny popis",
-            IsCompleted: true
+            IsCompleted: true,
+            Category: null
         );
 
         // Act
