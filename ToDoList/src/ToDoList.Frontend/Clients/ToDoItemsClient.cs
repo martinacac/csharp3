@@ -46,7 +46,7 @@ public class ToDoItemsClient : IToDoItemsClient
     public async Task UpdateItemAsync(ToDoItemView item)
     {
         // try {}
-        var itemRequest = new ToDoItemUpdateRequestDto(item.Name, item.Description, item.IsCompleted, item.Description);
+        var itemRequest = new ToDoItemUpdateRequestDto(item.Name, item.Description, item.IsCompleted, item.Category);
         var response = await httpClient.PutAsJsonAsync($"api/ToDoItems/{item.Id}", itemRequest);
     }
 
