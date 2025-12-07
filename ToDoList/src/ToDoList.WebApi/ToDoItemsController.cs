@@ -92,8 +92,8 @@ public class ToDoItemsController : ControllerBase
     public async Task<IActionResult> UpdateById(int toDoItemId, [FromBody] ToDoItemUpdateRequestDto request)
     {
         //map to Domain object as soon as possible
-        //var updatedItem = request.ToDomain();
-        //updatedItem.ToDoItemId = toDoItemId;
+        var updatedItem = request.ToDomain();
+        updatedItem.ToDoItemId = toDoItemId;
 
         //try to update the item by retrieving it with given id
         try
@@ -104,12 +104,12 @@ public class ToDoItemsController : ControllerBase
             {
                 return NotFound(); //404
             }
-            itemToUpdate.Name = request.Name;
-            itemToUpdate.Description = request.Description;
-            itemToUpdate.IsCompleted = request.IsCompleted;
-            itemToUpdate.Category = request.Category;
-            //await repository.UpdateAsync(updatedItem);
-            await repository.UpdateAsync(itemToUpdate);
+            //itemToUpdate.Name = request.Name;
+            //itemToUpdate.Description = request.Description;
+            //itemToUpdate.IsCompleted = request.IsCompleted;
+            //itemToUpdate.Category = request.Category;
+            await repository.UpdateAsync(updatedItem);
+            //await repository.UpdateAsync(itemToUpdate);
         }
         catch (Exception ex)
         {

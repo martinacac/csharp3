@@ -36,7 +36,11 @@ public class ToDoItemsRepository : IRepositoryAsync<ToDoItem> //implementace IRe
 
     public async Task UpdateAsync(ToDoItem item)
     {
-        context.ToDoItems.Update(item);
+        //context.ToDoItems.Update(item);
+        //await context.SaveChangesAsync();
+
+        var foundItem = await context.ToDoItems.FindAsync(item.ToDoItemId) ?? throw new ArgumentOutOfRangeException($"ToDo item with ID {item.ToDoItemId} not found.");
+        context.Entry(foundItem).CurrentValues.SetValues(item);
         await context.SaveChangesAsync();
     }
 }
