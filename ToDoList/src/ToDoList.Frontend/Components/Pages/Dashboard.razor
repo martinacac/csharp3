@@ -44,7 +44,25 @@
             }
         </tbody>
     </table>
-
+    @if (!string.IsNullOrEmpty(errorMessage) || !string.IsNullOrEmpty(errorMessage2))
+    {
+        <div class="alert alert-danger">
+            <p>@errorMessage</p>
+            @if (errorMessage.Contains("404"))
+            {
+                <p>Úkol nebyl nalezen v databázi.</p>
+            }
+            else if (errorMessage.Contains("500"))
+            {
+                <p>Došlo k chybě na serveru.</p>
+            }
+            <p>@errorMessage2</p>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-success">OK</div>
+    }
 </div>
 
 @code {
@@ -62,6 +80,9 @@ new ToDoItemView(){Id=5, Name="Přečíst knihu", Description="Kapitola 5", IsCo
 };
 
     private List<ToDoItemView> sortedData = new();
+
+    private string? errorMessage;
+    private string? errorMessage2;
 
     protected override async Task OnInitializedAsync()
     {
@@ -97,9 +118,55 @@ new ToDoItemView(){Id=5, Name="Přečíst knihu", Description="Kapitola 5", IsCo
         StateHasChanged();
     }
 
+    @* public async Task ChangeCompleted(ToDoItemView toDoItem)
+    {
+        try
+        {
+            toDoItem.IsCompleted = !toDoItem.IsCompleted;
+            await toDoItemsClient.UpdateItemAsync(toDoItem);
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error updating item {toDoItem.Id}: {ex.Message}");
+            Console.Error.WriteLine(ex.StackTrace);
+
+            errorMessage = $"Failed to update item {toDoItem.Id}: {ex.Message}";
+        } *@
+
     public async Task ChangeCompleted(ToDoItemView toDoItem)
     {
-        toDoItem.IsCompleted = !toDoItem.IsCompleted;
-        await toDoItemsClient.UpdateItemAsync(toDoItem);
+        try
+        {
+            toDoItem.IsCompleted = !toDoItem.IsCompleted;
+            var response = await toDoItemsClient.UpdateItemAsync(toDoItem);
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Update succeeded
+                errorMessage = null;
+            }
+            else
+            {
+                // Reveal why it failed
+                errorMessage = $"Update failed: {response.StatusCode} - {response.ReasonPhrase}";
+                if (!response.IsSuccessStatusCode)
+                {
+                    var body = await response.Content.ReadAsStringAsync();
+                    errorMessage2 = $"Update failed: {response.StatusCode} - {body}";
+                }
+
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Exception: {ex.Message}";
+            errorMessage2 = $"Exception: {ex.Message}";
+        }
     }
+
+
+
+
+
+}
 }
