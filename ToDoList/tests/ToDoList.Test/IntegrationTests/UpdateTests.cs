@@ -105,12 +105,15 @@ public class PutTests
         // Assert
         Assert.IsType<NoContentResult>(result);
 
-
         var updated = await context.ToDoItems.FindAsync(item.ToDoItemId);
         Assert.Equal("Nové jméno", updated.Name);
         Assert.Equal("Nový popis", updated.Description);
         Assert.True(updated.IsCompleted);
         Assert.Equal("TestCategory", updated.Category);
+
+        // Cleanup
+        context.ToDoItems.Remove(updated);
+        await context.SaveChangesAsync();
     }
 
     [Fact]
@@ -152,6 +155,10 @@ public class PutTests
         Assert.Equal("Nový popis", updated.Description);
         Assert.True(updated.IsCompleted);
         Assert.Equal("TestCategory", updated.Category);
+
+        // Cleanup
+        context.ToDoItems.Remove(updated);
+        await context.SaveChangesAsync();
     }
 }
 
