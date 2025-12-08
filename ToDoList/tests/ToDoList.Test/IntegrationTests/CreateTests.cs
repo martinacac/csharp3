@@ -44,6 +44,30 @@ public class PostTests
             await context.SaveChangesAsync();
         }
     }
+
+    [Fact]
+    public async Task Post_ReturnsBadRequest_WhenNameIsNull()
+    {
+        // Arrange
+        var connectionString = "Data Source=../../../IntegrationTests/data/localdb_test.db";
+        using var context = new ToDoItemsContext(connectionString);
+        var repository = new ToDoItemsRepository(context);
+        var controller = new ToDoItemsController(repository);
+
+        var request = new ToDoItemCreateRequestDto(
+            Name: null,                // invalid: Name is required
+            Description: "Popis",
+            IsCompleted: false,
+            Category: null
+        );
+
+        // Act
+        var result = await controller.Create(request);
+
+        // Assert
+        Assert.True(result.Result is BadRequestResult or BadRequestObjectResult);
+    }
+
 }
 
 // namespace ToDoList.Test.IntegrationTests;

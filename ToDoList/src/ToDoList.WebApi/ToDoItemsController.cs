@@ -29,6 +29,10 @@ public class ToDoItemsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<ToDoItemGetResponseDto>> Create(ToDoItemCreateRequestDto request)
     {
+        if (string.IsNullOrWhiteSpace(request.Name))
+        {
+            return BadRequest("Name is required");
+        }
         //map to Domain object as soon as possible
         var item = request.ToDomain();
 
