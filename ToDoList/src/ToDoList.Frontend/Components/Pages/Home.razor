@@ -31,4 +31,46 @@ Welcome to your new app.
     {
         return Guid.NewGuid().ToString();
     }
+
+    public int Divide(int a, int b)
+    {
+        return a / b;
+    }
+
+    public int Multiply(int a, int b)
+    {
+        return a * b;
+    }
+
+    public void LogToConsole(string text)
+    {
+        Console.WriteLine(text);
+    }
+
+    public delegate int NumberOperationDelegate(int number1, int number2); //deklarace delegáta
+    public delegate void StringTakingDelegate(string text);
+    protected override void OnInitialized()
+    {
+        NumberOperationDelegate mujDelegat;
+        mujDelegat = Multiply;
+        mujDelegat += Multiply;
+        mujDelegat += Divide; //předchozí výsledky zahodí a vrátí nulu (2/3 a int z toho) -> je lepší používat delegaty s void
+
+        int result = mujDelegat(2, 3);
+        Console.WriteLine(result);
+
+        StringTakingDelegate mujDelegatNaString;
+        mujDelegatNaString = LogToConsole;
+        mujDelegatNaString?.Invoke("LogujuDoKonzole");
+
+        List<string> strings = ["a", "b", "csafoskjapjd", "d", "e"];
+        strings.Where(s => s.Contains('c'));
+        strings.Where(DoesContainCharC);
+
+public bool DoesContainCharC(string retezec)
+    {
+        //doplnit
+    }
+
+}
 }

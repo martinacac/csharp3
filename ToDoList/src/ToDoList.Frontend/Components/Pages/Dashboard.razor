@@ -115,7 +115,7 @@ new ToDoItemView(){Id=5, Name="Přečíst knihu", Description="Kapitola 5", IsCo
     {
         //NavigationManager.NavigateTo($"deleteToDoItem/{toDoItem.Id}");
         await toDoItemsClient.DeleteItemAsync(toDoItem);
-        sortedData.Remove(toDoItem);
+        sortedData.Remove(toDoItem); //NEBO sortedData = await toDoItemsClient.ReadItemsAsync();
         StateHasChanged();
     }
 
