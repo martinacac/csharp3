@@ -1,0 +1,68 @@
+﻿@page "/editToDoItem/{ItemId:int}"
+@using ToDoList.Frontend.Clients
+@using ToDoList.Frontend.Models
+
+@inject IToDoItemsClient toDoItemsClient
+@inject NavigationManager NavigationManager
+
+@rendermode InteractiveServer
+
+@if (ToDoItemModel is not null)
+{
+    <EditForm Model="ToDoItemModel" FormName="EditToDoItem" OnValidSubmit="Submit">
+        <DataAnnotationsValidator></DataAnnotationsValidator>
+        <div class="mb-3">
+            <label for="Name" class="form-label">Name</label>
+            <InputText id="Name" @bind-Value="ToDoItemModel.Name" class="form-control" />
+            <ValidationMessage For="() => ToDoItemModel.Name" />
+        </div>
+        <div class="mb-3">
+            <label for="Description" class="form-label">Description</label>
+            <InputText id="Description" @bind-Value="ToDoItemModel.Description" class="form-control" />
+            @*<ValidationMessage For="() => ToDoItemModel.Description" />*@
+        </div>
+        <div class="mb-3">
+            <label for="Category" class="form-label">Category</label>
+            <InputText id="Category" @bind-Value="ToDoItemModel.Category" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label for="IsCompleted" class="form-label">Is Completed</label>
+            <InputCheckbox id="IsCompleted" @bind-Value="ToDoItemModel.IsCompleted" />
+        </div>
+        <button type="submit">Odeslat</button>
+    </EditForm>
+}
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        ToDoItemModel = await toDoItemsClient.ReadItemByIdAsync(ItemId);
+        SubmitDelegate = LogSubmit;
+    }
+
+    [Parameter]
+    public int ItemId { get; set; }
+
+    public ToDoItemViewProcessingDelegate SubmitDelegate;
+
+    [SupplyParameterFromForm]
+    public ToDoItemView ToDoItemModel { get; set; }
+
+    public async Task Submit()
+    {
+        await toDoItemsClient.UpdateItemAsync(ToDoItemModel);
+        SubmitDelegate(ToDoItemModel);
+        NavigationManager.NavigateTo("/");
+    }
+
+
+    public delegate void ToDoItemViewProcessingDelegate(ToDoItemView item);
+
+    public void LogSubmit(ToDoItemView? item)
+    {
+        if (item == null) return;
+
+        Console.WriteLine($"Potvrzujeme ToDoItem s Id = {item.Id} - {item.Name}");
+    }
+
+}

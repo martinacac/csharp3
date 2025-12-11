@@ -6,36 +6,38 @@ using ToDoList.Persistence;
 using ToDoList.Persistence.Repositories;
 using ToDoList.WebApi;
 
-public class GetTests
+public class GetTests : IntegrationTestBase
 {
     [Fact]
     public async Task Get_AllItems_ReturnsAllItems()
     {
         // Arrange
-        var connectionString = "Data Source=../../../IntegrationTests/data/localdb_test.db";
-        using var context = new ToDoItemsContext(connectionString);
-        var repository = new ToDoItemsRepository(context);
-        var controller = new ToDoItemsController(repository);
+        // var connectionString = "Data Source=../../../IntegrationTests/data/localdb_test.db";
+        // using var context = new ToDoItemsContext(connectionString);
+        // var repository = new ToDoItemsRepository(context);
+        // var controller = new ToDoItemsController(repository);
 
         var todoItem1 = new ToDoItem
         {
             Name = "Jmeno1",
             Description = "Popis1",
-            IsCompleted = false
+            IsCompleted = false,
+            Category = "Kategorie1"
         };
         var todoItem2 = new ToDoItem
         {
             Name = "Jmeno2",
             Description = "Popis2",
-            IsCompleted = true
+            IsCompleted = true,
+            Category = "Kategorie2"
         };
 
-        context.ToDoItems.Add(todoItem1);
-        context.ToDoItems.Add(todoItem2);
-        await context.SaveChangesAsync();
+        Context.ToDoItems.Add(todoItem1);
+        Context.ToDoItems.Add(todoItem2);
+        await Context.SaveChangesAsync();
 
         // Act
-        var result = await controller.Read();
+        var result = await Controller.Read();
         var value = result.GetValue();
 
         // Assert
@@ -46,11 +48,12 @@ public class GetTests
         Assert.Equal(todoItem1.Name, firstToDo.Name);
         Assert.Equal(todoItem1.Description, firstToDo.Description);
         Assert.Equal(todoItem1.IsCompleted, firstToDo.IsCompleted);
+        Assert.Equal(todoItem1.Category, firstToDo.Category);
 
         // Cleanup
-        context.ToDoItems.Remove(todoItem1);
-        context.ToDoItems.Remove(todoItem2);
-        await context.SaveChangesAsync();
+        Context.ToDoItems.Remove(todoItem1);
+        Context.ToDoItems.Remove(todoItem2);
+        await Context.SaveChangesAsync();
     }
 }
 

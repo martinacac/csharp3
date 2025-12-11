@@ -26,6 +26,7 @@ var app = builder.Build();
     app.MapControllers(); //namapuji controllery
     app.UseSwagger();
     app.UseSwaggerUI(config => config.SwaggerEndpoint("v1/swagger.json", "ToDoList API V1"));
+    app.UseDeveloperExceptionPage(); // for development only
 }
 
 

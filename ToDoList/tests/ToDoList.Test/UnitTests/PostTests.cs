@@ -26,7 +26,8 @@ public class PostTests //Create
         var request = new ToDoItemCreateRequestDto(
             Name: "Jmeno",
             Description: "Popis",
-            IsCompleted: false
+            IsCompleted: false,
+            Category: ""
         );
 
         // Act
@@ -44,6 +45,7 @@ public class PostTests //Create
         Assert.Equal(request.Description, value.Description);
         Assert.Equal(request.IsCompleted, value.IsCompleted);
         Assert.Equal(request.Name, value.Name);
+        Assert.Equal(request.Category, value.Category);
 
         // Cleanup - if using NSubstitute - nepotřebuji cleanup protože nepracuji s DB
         // var createdItem = context.ToDoItems.Find(value.Id);
@@ -64,7 +66,8 @@ public class PostTests //Create
         var request = new ToDoItemCreateRequestDto(
             Name: "Jmeno",
             Description: "Popis",
-            IsCompleted: false
+            IsCompleted: false,
+            Category: null
         );
 
         // Simulate exception during repository.Create

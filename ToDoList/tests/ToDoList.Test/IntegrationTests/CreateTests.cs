@@ -6,24 +6,25 @@ using ToDoList.Persistence;
 using ToDoList.Persistence.Repositories;
 using ToDoList.WebApi;
 
-public class PostTests
+public class PostTests : IntegrationTestBase
 {
     [Fact]
     public async Task Post_ValidRequest_ReturnsNewItem()
     {
         // Arrange
-        var connectionString = "Data Source=../../../IntegrationTests/data/localdb_test.db";
-        using var context = new ToDoItemsContext(connectionString);
-        var repository = new ToDoItemsRepository(context);
-        var controller = new ToDoItemsController(repository);
+        //var connectionString = "Data Source=../../../IntegrationTests/data/localdb_test.db";
+        //using var context = new ToDoItemsContext(connectionString);
+        //var repository = new ToDoItemsRepository(context);
+        //var controller = new ToDoItemsController(repository);
         var request = new ToDoItemCreateRequestDto(
             Name: "Jmeno",
             Description: "Popis",
-            IsCompleted: false
+            IsCompleted: false,
+            Category: "Kategorie"
         );
 
         // Act
-        var result = await controller.Create(request);
+        var result = await Controller.Create(request);
         var resultResult = result.Result;
         var value = result.GetValue();
 
@@ -34,15 +35,40 @@ public class PostTests
         Assert.Equal(request.Description, value.Description);
         Assert.Equal(request.IsCompleted, value.IsCompleted);
         Assert.Equal(request.Name, value.Name);
+        Assert.Equal(request.Category, value.Category);
 
         // Cleanup
-        var createdItem = context.ToDoItems.Find(value.Id);
+        var createdItem = Context.ToDoItems.Find(value.Id);
         if (createdItem != null)
         {
-            context.ToDoItems.Remove(createdItem);
-            await context.SaveChangesAsync();
+            Context.ToDoItems.Remove(createdItem);
+            await Context.SaveChangesAsync();
         }
     }
+
+    [Fact]
+    public async Task Post_ReturnsBadRequest_WhenNameIsNull()
+    {
+        // Arrange
+        // var connectionString = "Data Source=../../../IntegrationTests/data/localdb_test.db";
+        // using var context = new ToDoItemsContext(connectionString);
+        // var repository = new ToDoItemsRepository(context);
+        // var controller = new ToDoItemsController(repository);
+
+        var request = new ToDoItemCreateRequestDto(
+            Name: null,                // invalid: Name is required
+            Description: "Popis",
+            IsCompleted: false,
+            Category: null
+        );
+
+        // Act
+        var result = await Controller.Create(request);
+
+        // Assert
+        Assert.True(result.Result is BadRequestResult or BadRequestObjectResult);
+    }
+
 }
 
 // namespace ToDoList.Test.IntegrationTests;

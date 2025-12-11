@@ -7,7 +7,7 @@ using ToDoList.Persistence;
 using ToDoList.Persistence.Repositories;
 using ToDoList.WebApi;
 
-public class PutTests
+public class PutTests : IntegrationTestBase
 {
     // [Fact]
     // public void Put_ValidId_ReturnsNoContent()
@@ -48,23 +48,117 @@ public class PutTests
     public async Task Put_InvalidId_ReturnsNotFound()
     {
         // Arrange
-        var connectionString = "Data Source=../../../IntegrationTests/data/localdb_test.db";
-        using var context = new ToDoItemsContext(connectionString);
-        var repository = new ToDoItemsRepository(context);
-        var controller = new ToDoItemsController(repository);
+        //var connectionString = "Data Source=../../../IntegrationTests/data/localdb_test.db";
+        // using var context = new ToDoItemsContext(connectionString);
+        // var repository = new ToDoItemsRepository(context);
+        // var controller = new ToDoItemsController(repository);
 
         var request = new ToDoItemUpdateRequestDto(
             Name: "Jine jmeno",
             Description: "Jiny popis",
-            IsCompleted: true
+            IsCompleted: true,
+            Category: null
         );
 
         // Act
         var invalidId = -1;
-        var result = await controller.UpdateById(invalidId, request);
+        var result = await Controller.UpdateById(invalidId, request);
 
         // Assert
         Assert.IsType<NotFoundResult>(result);
+    }
+
+
+    [Fact]
+    public async Task Put_ValidId_ReturnsNoContent()
+    {
+        // Arrange
+        // var connectionString = "Data Source=../../../IntegrationTests/data/localdb_test.db";
+        // using var context = new ToDoItemsContext(connectionString);
+
+        //context.Database.EnsureDeleted();
+        //context.Database.EnsureCreated();
+
+        // var repository = new ToDoItemsRepository(context);
+        // var controller = new ToDoItemsController(repository);
+
+        var item = new ToDoItem
+        {
+            Name = "Původní jméno",
+            Description = "Původní popis",
+            IsCompleted = false,
+            Category = null
+        };
+        Context.ToDoItems.Add(item);
+        await Context.SaveChangesAsync();
+
+        var request = new ToDoItemUpdateRequestDto(
+            Name: "Nové jméno",
+            Description: "Nový popis",
+            IsCompleted: true,
+            Category: "TestCategory"
+        );
+
+        // Act
+        var result = await Controller.UpdateById(item.ToDoItemId, request);
+
+        // Assert
+        Assert.IsType<NoContentResult>(result);
+
+        var updated = await Context.ToDoItems.FindAsync(item.ToDoItemId);
+        Assert.Equal("Nové jméno", updated.Name);
+        Assert.Equal("Nový popis", updated.Description);
+        Assert.True(updated.IsCompleted);
+        Assert.Equal("TestCategory", updated.Category);
+
+        // Cleanup
+        Context.ToDoItems.Remove(updated);
+        await Context.SaveChangesAsync();
+    }
+
+    [Fact]
+    public async Task Put_ChangesItemCorrectly()
+    {
+        // Arrange
+        // var connectionString = "Data Source=../../../IntegrationTests/data/localdb_test.db";
+        // using var context = new ToDoItemsContext(connectionString);
+
+        //context.Database.EnsureDeleted();
+        //context.Database.EnsureCreated();
+
+        // var repository = new ToDoItemsRepository(context);
+        // var controller = new ToDoItemsController(repository);
+
+        var item = new ToDoItem
+        {
+            Name = "Původní jméno",
+            Description = "Původní popis",
+            IsCompleted = false,
+            Category = null
+        };
+        Context.ToDoItems.Add(item);
+        await Context.SaveChangesAsync();
+
+        var request = new ToDoItemUpdateRequestDto(
+            Name: "Nové jméno",
+            Description: "Nový popis",
+            IsCompleted: true,
+            Category: "TestCategory"
+        );
+
+        // Act
+        var result = await Controller.UpdateById(item.ToDoItemId, request);
+
+        // Assert
+        var updated = await Context.ToDoItems.FindAsync(item.ToDoItemId);
+        Assert.Equal("Nové jméno", updated.Name);
+        Assert.Equal("Nový popis", updated.Description);
+        Assert.True(updated.IsCompleted);
+        Assert.Equal("TestCategory", updated.Category);
+
+        // Cleanup
+        Context.ToDoItems.Remove(updated);
+        await Context.SaveChangesAsync();
     }
 }
 

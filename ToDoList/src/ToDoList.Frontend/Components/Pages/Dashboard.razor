@@ -1,8 +1,9 @@
-﻿@using ToDoList.Frontend.Models
+﻿@using ToDoList.Domain.Models
+@using ToDoList.Frontend.Models
 @using ToDoList.Frontend.Clients
 @inject IToDoItemsClient toDoItemsClient
+@inject NavigationManager NavigationManager
 
-@rendermode InteractiveServer
 <div>
     <button @onclick="OrderByID">Order by ID</button>
 </div>
@@ -12,13 +13,16 @@
 <div>
     <h2>ToDo items dashboard</h2>
 
-    <table>
-        <thead>
+    <table class="table table-hover mt-3">
+        <thead class="table-dark">
             <tr>
-                <th>ID<button @onclick="OrderByID">Order by ID ↓</button></th>
-                <th>Název<button @onclick="OrderByName">Order by Name ↓</button></th>
+                <th>ID<button class="btn btn-primary ml-3" @onclick="OrderByID">Order by ID ↓</button></th>
+                <th>Název<button class="btn btn-primary ml-3" @onclick="OrderByName">Order by Name ↓</button></th>
                 <th>Popis</th>
+                <th>Kategorie<button class="btn btn-primary ml-3" @onclick="OrderByCategory">Order by Category
+                        ↓</button></th>
                 <th>Dokončeno</th>
+                <th>Akce</th>
             </tr>
         </thead>
         <tbody>
@@ -28,24 +32,57 @@
                     <td>@item.Id</td>
                     <td>@item.Name</td>
                     <td>@item.Description</td>
+                    <td>@item.Category</td>
                     <td>@(item.IsCompleted ? "Dokonceny" : "Nedokonceny")</td>
+                    <td>
+                        <button class="btn btn-success" @onclick="() => EditItem(item)">Editovat</button>
+                        <button class="btn btn-danger" @onclick="() => DeleteItem(item)">Smazat</button>
+                        <button class="btn btn-info" @onclick="() => ChangeCompleted(item)">Změnit dokončenost</button>
+
+                    </td>
                 </tr>
             }
         </tbody>
     </table>
-
+    @if (!string.IsNullOrEmpty(errorMessage) || !string.IsNullOrEmpty(errorMessage2))
+    {
+        <div class="alert alert-danger">
+            <p>@errorMessage</p>
+            @if (errorMessage.Contains("404"))
+            {
+                <p>Úkol nebyl nalezen v databázi.</p>
+            }
+            else if (errorMessage.Contains("500"))
+            {
+                <p>Došlo k chybě na serveru.</p>
+            }
+            <p>@errorMessage2</p>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-success">OK</div>
+    }
 </div>
 
 @code {
     private List<ToDoItemView> testData = new()
 {
-new ToDoItemView(1, "Nakoupit potraviny", "Mléko, chléb, vejce", false),
-new ToDoItemView(2, "Dokončit projekt", "Implementovat všechny funkce", true),
-new ToDoItemView(3, "Zavolat mamince", "Domluvit víkend", false),
-new ToDoItemView(4, "Cvičit", "Běhání v parku", false),
-new ToDoItemView(5, "Přečíst knihu", "Kapitola 5", true)
+//new ToDoItemView(1, "Nakoupit potraviny", "Mléko, chléb, vejce", false),
+new ToDoItemView(){Id=1, Name="Nakoupit potraviny", Description="Mléko, chléb, vejce", IsCompleted=false},
+//new ToDoItemView(2, "Dokončit projekt", "Implementovat všechny funkce", true),
+new ToDoItemView(){Id=2, Name="Dokončit projekt", Description="Implementovat všechny funkce", IsCompleted=true},
+//new ToDoItemView(3, "Zavolat mamince", "Domluvit víkend", false),
+new ToDoItemView(){Id=3, Name="Zavolat mamince", Description="Domluvit víkend", IsCompleted=false},
+//new ToDoItemView(4, "Cvičit", "Běhání v parku", false),
+new ToDoItemView(){Id=4, Name="Cvičit", Description="Běhání v parku", IsCompleted=false},
+new ToDoItemView(){Id=5, Name="Přečíst knihu", Description="Kapitola 5", IsCompleted=true}
 };
+
     private List<ToDoItemView> sortedData = new();
+
+    private string? errorMessage;
+    private string? errorMessage2;
 
     protected override async Task OnInitializedAsync()
     {
@@ -63,4 +100,69 @@ new ToDoItemView(5, "Přečíst knihu", "Kapitola 5", true)
     {
         sortedData = sortedData.OrderBy(item => item.Name).ToList();
     }
+
+    private void OrderByCategory()
+    {
+        sortedData = sortedData.OrderBy(item => item.Category).ToList();
+    }
+
+    public void EditItem(ToDoItemView toDoItem)
+    {
+        NavigationManager.NavigateTo($"editToDoItem/{toDoItem.Id}");
+    }
+
+    public async Task DeleteItem(ToDoItemView toDoItem)
+    {
+        //NavigationManager.NavigateTo($"deleteToDoItem/{toDoItem.Id}");
+        await toDoItemsClient.DeleteItemAsync(toDoItem);
+        sortedData.Remove(toDoItem); //NEBO sortedData = await toDoItemsClient.ReadItemsAsync();
+        StateHasChanged();
+    }
+
+    @* public async Task ChangeCompleted(ToDoItemView toDoItem)
+    {
+        try
+        {
+            toDoItem.IsCompleted = !toDoItem.IsCompleted;
+            await toDoItemsClient.UpdateItemAsync(toDoItem);
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error updating item {toDoItem.Id}: {ex.Message}");
+            Console.Error.WriteLine(ex.StackTrace);
+
+            errorMessage = $"Failed to update item {toDoItem.Id}: {ex.Message}";
+        } *@
+
+    public async Task ChangeCompleted(ToDoItemView toDoItem)
+    {
+        try
+        {
+            toDoItem.IsCompleted = !toDoItem.IsCompleted;
+            var response = await toDoItemsClient.UpdateItemAsync(toDoItem);
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Update succeeded
+                errorMessage = null;
+            }
+            else
+            {
+                // Reveal why it failed
+                errorMessage = $"Update failed: {response.StatusCode} - {response.ReasonPhrase}";
+                if (!response.IsSuccessStatusCode)
+                {
+                    var body = await response.Content.ReadAsStringAsync();
+                    errorMessage2 = $"Update failed: {response.StatusCode} - {body}";
+                }
+
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Exception: {ex.Message}";
+            errorMessage2 = $"Exception: {ex.Message}";
+        }
+    }
+
 }
