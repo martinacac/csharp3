@@ -67,9 +67,21 @@ Welcome to your new app.
         strings.Where(s => s.Contains('c'));
         strings.Where(DoesContainCharC);
 
-public bool DoesContainCharC(string retezec)
+        Action functionReturningVoid;
+        Action<string> functionTakingStringAndReturningVoid;
+        functionTakingStringAndReturningVoid = LogToConsole;
+
+        functionTakingStringAndReturningVoid?.Invoke("Zprava z Action!");
+
+        Func<bool> functionReturningBool;
+        Func<int, int, int> functionReturningIntAndTakingTwoInts;
+
+        functionReturningIntAndTakingTwoInts = Multiply;
+    }
+
+    public bool DoesContainCharC(string retezec)
     {
-        //doplnit
+        return retezec.Contains('c');
     }
 
 }
