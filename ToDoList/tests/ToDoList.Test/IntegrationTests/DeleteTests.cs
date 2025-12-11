@@ -7,35 +7,35 @@ using ToDoList.Persistence;
 using ToDoList.Persistence.Repositories;
 using ToDoList.WebApi;
 
-public class DeleteTests
+public class DeleteTests : IntegrationTestBase
 {
     [Fact]
     public async Task Delete_ValidId_ReturnsNoContent()
     {
         // Arrange
-        var connectionString = "Data Source=../../../IntegrationTests/data/localdb_test.db";
-        using var context = new ToDoItemsContext(connectionString);
-        var repository = new ToDoItemsRepository(context);
-        var controller = new ToDoItemsController(repository);
+        //var connectionString = "Data Source=../../../IntegrationTests/data/localdb_test.db";
+        //using var context = new ToDoItemsContext(connectionString);
+        //var repository = new ToDoItemsRepository(context);
+        //var controller = new ToDoItemsController(repository);
 
         var toDoItem = new ToDoItem
         {
             Name = "Jmeno",
             Description = "Popis",
             IsCompleted = false,
-            Category= "Kategorie"
+            Category = "Kategorie"
         };
-        context.ToDoItems.Add(toDoItem);
-        await context.SaveChangesAsync();
+        Context.ToDoItems.Add(toDoItem);
+        await Context.SaveChangesAsync();
 
         // Act
-        var result = await controller.DeleteById(toDoItem.ToDoItemId);
+        var result = await Controller.DeleteById(toDoItem.ToDoItemId);
 
         // Assert
         Assert.IsType<NoContentResult>(result);
 
         // Verify item was deleted
-        var deletedItem = context.ToDoItems.Find(toDoItem.ToDoItemId);
+        var deletedItem = Context.ToDoItems.Find(toDoItem.ToDoItemId);
         Assert.Null(deletedItem);
     }
 
@@ -43,14 +43,14 @@ public class DeleteTests
     public async Task Delete_InvalidId_ReturnsNotFound()
     {
         // Arrange
-        var connectionString = "Data Source=../../../IntegrationTests/data/localdb_test.db";
-        using var context = new ToDoItemsContext(connectionString);
-        var repository = new ToDoItemsRepository(context);
-        var controller = new ToDoItemsController(repository);
+        // var connectionString = "Data Source=../../../IntegrationTests/data/localdb_test.db";
+        // using var context = new ToDoItemsContext(connectionString);
+        // var repository = new ToDoItemsRepository(context);
+        // var controller = new ToDoItemsController(repository);
 
         // Act
         var invalidId = -1;
-        var result = await controller.DeleteById(invalidId);
+        var result = await Controller.DeleteById(invalidId);
 
         // Assert
         Assert.IsType<NotFoundResult>(result);
