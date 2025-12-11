@@ -20,7 +20,7 @@ public class GetTests //Read
         var repositoryMock = Substitute.For<IRepositoryAsync<ToDoItem>>();
         var controller = new ToDoItemsController(repositoryMock); //odstranit context z controlleru!!!
         //konfigurace mocku
-        var someItem = new ToDoItem { Name = "testname", Description = "testDesription", IsCompleted = false };
+        var someItem = new ToDoItem { Name = "testname", Description = "testDesription", IsCompleted = false, Category = "testCategory" };
         repositoryMock.ReadAllAsync().Returns([someItem]); //seznam o jedné položce
 
         // Act
@@ -42,6 +42,7 @@ public class GetTests //Read
         Assert.Equal(someItem.Name, dto.Name);
         Assert.Equal(someItem.Description, dto.Description);
         Assert.Equal(someItem.IsCompleted, dto.IsCompleted);
+        Assert.Equal(someItem.Category, dto.Category);
     }
 
     [Fact]
@@ -95,7 +96,8 @@ public class GetTests //Read
             ToDoItemId = someId,
             Name = "TestName",
             Description = "TestDescription",
-            IsCompleted = false
+            IsCompleted = false,
+            Category = "testCategory"
         };
 
         repositoryMock.ReadByIdAsync(someId).Returns(item);
@@ -111,6 +113,7 @@ public class GetTests //Read
         Assert.Equal(item.Name, value.Name);
         Assert.Equal(item.Description, value.Description);
         Assert.Equal(item.IsCompleted, value.IsCompleted);
+        Assert.Equal(item.Category, value.Category);
 
         repositoryMock.Received(1).ReadByIdAsync(someId);
     }

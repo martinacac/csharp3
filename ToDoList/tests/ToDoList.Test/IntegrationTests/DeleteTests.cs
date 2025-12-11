@@ -22,7 +22,8 @@ public class DeleteTests
         {
             Name = "Jmeno",
             Description = "Popis",
-            IsCompleted = false
+            IsCompleted = false,
+            Category= "Kategorie"
         };
         context.ToDoItems.Add(toDoItem);
         await context.SaveChangesAsync();

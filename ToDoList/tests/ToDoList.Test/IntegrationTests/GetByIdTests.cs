@@ -21,7 +21,8 @@ public class GetByIdTests
         {
             Name = "Jmeno",
             Description = "Popis",
-            IsCompleted = false
+            IsCompleted = false,
+            Category = "Kategorie"
         };
         context.ToDoItems.Add(toDoItem);
         await context.SaveChangesAsync();
@@ -39,6 +40,7 @@ public class GetByIdTests
         Assert.Equal(toDoItem.Description, value.Description);
         Assert.Equal(toDoItem.IsCompleted, value.IsCompleted);
         Assert.Equal(toDoItem.Name, value.Name);
+        Assert.Equal(toDoItem.Category, value.Category);
 
         // Cleanup
         context.ToDoItems.Remove(toDoItem);

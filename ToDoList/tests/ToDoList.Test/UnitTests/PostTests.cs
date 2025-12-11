@@ -45,6 +45,7 @@ public class PostTests //Create
         Assert.Equal(request.Description, value.Description);
         Assert.Equal(request.IsCompleted, value.IsCompleted);
         Assert.Equal(request.Name, value.Name);
+        Assert.Equal(request.Category, value.Category);
 
         // Cleanup - if using NSubstitute - nepotřebuji cleanup protože nepracuji s DB
         // var createdItem = context.ToDoItems.Find(value.Id);

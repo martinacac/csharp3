@@ -23,7 +23,8 @@ public class PutTests //Update
             ToDoItemId = 1,
             Name = "Jmeno",
             Description = "Popis",
-            IsCompleted = false
+            IsCompleted = false,
+            Category = "testCategory"
         };
 
         repositoryMock.ReadByIdAsync(existingItem.ToDoItemId).Returns(existingItem);
@@ -49,7 +50,8 @@ public class PutTests //Update
             item.ToDoItemId == existingItem.ToDoItemId &&
             item.Name == request.Name &&
             item.Description == request.Description &&
-            item.IsCompleted == request.IsCompleted
+            item.IsCompleted == request.IsCompleted &&
+            item.Category == request.Category
         ));
     }
     [Fact]

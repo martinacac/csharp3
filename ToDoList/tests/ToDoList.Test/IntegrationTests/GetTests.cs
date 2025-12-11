@@ -21,13 +21,15 @@ public class GetTests
         {
             Name = "Jmeno1",
             Description = "Popis1",
-            IsCompleted = false
+            IsCompleted = false,
+            Category = "Kategorie1"
         };
         var todoItem2 = new ToDoItem
         {
             Name = "Jmeno2",
             Description = "Popis2",
-            IsCompleted = true
+            IsCompleted = true,
+            Category = "Kategorie2"
         };
 
         context.ToDoItems.Add(todoItem1);
@@ -46,6 +48,7 @@ public class GetTests
         Assert.Equal(todoItem1.Name, firstToDo.Name);
         Assert.Equal(todoItem1.Description, firstToDo.Description);
         Assert.Equal(todoItem1.IsCompleted, firstToDo.IsCompleted);
+        Assert.Equal(todoItem1.Category, firstToDo.Category);
 
         // Cleanup
         context.ToDoItems.Remove(todoItem1);
